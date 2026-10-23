@@ -1,0 +1,141 @@
+{
+    "menu": {
+        "home": "Inicio",
+        "inventory": "Materiales",
+        "products": "Productos",
+        "stock": "Existencias",
+        "settings": "Configuración",
+        "chart": "Estadisticas"
+    },
+    "material": {
+        "name": "Nombre",
+        "category": "Categoría",
+        "select_category": "Seleccione una categoría",
+        "category_help": "Elija la categoría a la que pertenece este material.",
+        "description": "Descripción",
+        "optional": "opcional",
+        "quantity": "Cantidad por unidad comprada",
+        "quantity_help": "Ej: si cada bolsa de harina tiene 500 gramos, escribe 500.",
+        "purchase_quantity": "Unidades compradas",
+        "purchase_quantity_help": "Ej: si compraste 2 bolsas, escribe 2.",
+        "unit": "Unidad de medida",
+        "unit_help": "Ej: gramos, mililitros, unidades, etc.",
+        "purchase_price": "Precio total pagado",
+        "purchase_price_help": "Precio que pagaste en total por todas las unidades.",
+        "search": "Buscar...",
+        "save": "Guardar",
+        "update": "Actualizar",
+        "add_title": "Agrega un material",
+        "update_title": "Actualiza {{name}}",
+        "saved_success": "Material guardado correctamente",
+        "save_error": "Ocurrió un error al guardar el material",
+        "inventory_settings": "Configuración de stock",
+        "min_stock_alert": "Stock mínimo",
+        "min_stock_help": "Se notificará cuando el stock sea igual o inferior a este valor.",
+        "has_expiration_date": "¿Tiene fecha de vencimiento?",
+        "expiration_date_help": "Active esta opción si el material caduca.",
+        "additional_info": "Información adicional",
+        "supplier": "Proveedor",
+        "notes": "Notas",
+        "no_materials": "No hay materiales disponibles",
+        "delete_title": "Eliminar material",
+        "delete_message": "¿Estás seguro de que deseas eliminar el material \"{{name}}\"? Esta acción no se puede deshacer.",
+        "updated_success": "Material actualizado exitosamente"
+    },
+    "purchase": {
+        "add_title": "Agregar Compra",
+        "purchase_details": "Detalles de la Compra",
+        "quantity_per_unit": "Cantidad por unidad",
+
+        "quantity_per_unit_help": "Ej: 500g si compras bolsas de 500g",
+        "units_quantity": "Número de unidades",
+        "units_quantity_help": "Ej: 2 si compras 2 bolsas",
+        "total_quantity": "Cantidad total",
+        "pricing_info": "Información de Precios",
+        "unit_price": "Precio por unidad",
+        "unit_price_help": "Precio de cada bolsa/paquete individual",
+        "total_paid": "Total pagado",
+        "total_paid_help": "Monto total que pagaste",
+        "cost_per_unit": "Costo por unidad base",
+        "expiration_info": "Información de Vencimiento",
+        "expiration_date": "Fecha de vencimiento",
+        "expiration_date_help": "Formato: YYYY-MM-DD (opcional)",
+        "add_to_inventory": "Agregar al Inventario",
+        "current_stock": "Stock actual",
+        "avg_cost": "Costo promedio"
+    },
+    "consumption": {
+        "record_title": "Registrar Consumo",
+        "consumption_details": "Detalles del Consumo",
+        "quantity_to_consume": "Cantidad a consumir",
+        "max_available": "Máximo disponible",
+        "quick_quantities": "Cantidades rápidas",
+        "remaining_stock": "Stock restante",
+        "consumption_value": "Valor del consumo",
+        "reason": "Razón del consumo",
+        "reason_placeholder": "Ej: Producción, desperdicio, etc.",
+        "record_consumption": "Registrar Consumo",
+        "low_stock_warning": "Este material tiene stock bajo",
+        "consumed": "consumidos"
+    },
+    "inventory": {
+        "out_of_stock": "Sin stock",
+        "low_stock": "Stock bajo",
+        "quick_adjust": "Ajuste rápido",
+        "record_consumption": "Consumo",
+        "add_purchase": "Comprar",
+        "view_details": "Ver detalles",
+        "last_purchase": "Última compra",
+        "total_materials": "Total materiales",
+        "total_value": "Valor total",
+        "low_stock_items": "Items con stock bajo"
+    },
+    "product": {
+        "no_products": "No hay productos disponibles"
+    },
+    "settings": {
+        "theme": "Tema",
+        "language": "Idioma",
+        "language_help": "Selecciona el idioma de la aplicación.",
+        "theme_help": "Selecciona el tema de la aplicación.",
+        "dark": "Oscuro",
+        "light": "Claro",
+        "system": "Predeterminado del sistema",
+        "language_note": "Los textos cambian inmediatamente. Puedes ajustarlo cuando quieras."
+    },
+    "language": {
+        "en": "Inglés",
+        "es": "Español"
+    },
+    "errors": {
+        "number_required": "El valor de {{name}} debe ser mayor que 0",
+        "required": "{{name}} es obligatorio",
+        "select_required": "Debe seleccionar una opción para {{name}}"
+    },
+    "validation": {
+        "min_length": "Debe tener al menos {{min}} caracteres.",
+        "max_length": "No debe superar los {{max}} caracteres.",
+        "min_value": "Debe ser mayor o igual a {{min}}.",
+        "max_value": "Debe ser menor o igual a {{max}}."
+    },
+    "labels": {
+        "date_added": "Fecha de ingreso",
+        "low_stock": "Pocas existencias",
+        "items_one": "{{count}} elemento",
+        "items_other": "{{count}} elementos",
+        "empty": "No hay elementos disponibles"
+    },
+    "sort": {
+        "title": "Ordenar por",
+        "materials_title": "Ordenar materiales",
+        "products_title": "Ordenar productos",
+        "asc": "↑",
+        "desc": "↓"
+    },
+    "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar"
+    }
+}

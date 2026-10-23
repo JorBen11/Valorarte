@@ -1,11 +1,10 @@
 // Fallback for using MaterialIcons on Android and web.
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
+type IconMapping = Record<string, ComponentProps<typeof MaterialIcons>['name']>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
@@ -18,24 +17,40 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
-} as IconMapping;
+  'doc.plaintext': 'assignment',
+  'plus.circle.fill': 'assignment-add',
+  'bag.fill': 'shopping-bag',
+  'gear': 'settings',
+  'cube.box': 'inventory-2',
+  'chevron.left': 'chevron-left',
+  'textformat.abc': 'sort-by-alpha',
+  'number': 'looks-one',
+  'calendar': 'calendar-today',
+  'dollarsign.circle': 'attach-money',
+  'dollarsign': 'attach-money',
+  'arrow.up': 'arrow-upward',
+  'arrow.down': 'arrow-downward',
+  'nosign': 'not-interested',
+  'chart.bar.fill': 'bar-chart',
+} satisfies IconMapping;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
  * This ensures a consistent look across platforms, and optimal resource usage.
  * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
  */
+type IconSymbolProps = {
+  readonly name: IconSymbolName;
+  readonly size?: number;
+  readonly color: string | OpaqueColorValue;
+  readonly style?: StyleProp<TextStyle>;
+};
+
 export function IconSymbol({
   name,
   size = 24,
   color,
   style,
-}: {
-  name: IconSymbolName;
-  size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
-}) {
+}: IconSymbolProps) {
   return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
 }
