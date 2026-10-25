@@ -43,6 +43,4 @@ app-example
 /android
 
 # ia
-CLAUDE.md
-.claude
-docs
+graphify-out

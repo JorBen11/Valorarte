@@ -1,0 +1,35 @@
+{
+  "tabs": {
+    "home": "Home",
+    "ingredients": "Ingredients",
+    "products": "Products",
+    "settings": "Settings"
+  },
+  "common": {
+    "notAvailableYet": "This section will be available in an upcoming version."
+  },
+  "home": {
+    "title": "Home"
+  },
+  "ingredients": {
+    "title": "Ingredients"
+  },
+  "products": {
+    "title": "Products"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "system": "Follow system",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": {
+      "title": "Language",
+      "system": "System language",
+      "es": "Español",
+      "en": "English"
+    }
+  }
+}
