@@ -6,13 +6,129 @@
     "settings": "Settings"
   },
   "common": {
-    "notAvailableYet": "This section will be available in an upcoming version."
+    "notAvailableYet": "This section will be available in an upcoming version.",
+    "loading": "Loading",
+    "loadError": "Check that the app has storage available and try again.",
+    "saveError": "The data could not be saved. Your changes are still here; try again.",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loadErrorTitle": "Couldn’t load your data",
+    "optionalField": "{{label}} (optional)",
+    "close": "Close",
+    "comingSoon": "Coming soon"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "invalid": "Enter a valid value.",
+    "unknownUnit": "Choose a unit from the list.",
+    "dimensionMismatch": "The unit does not match the measurement type.",
+    "negative": "The value cannot be negative.",
+    "invalidNumber": "Enter a number, for example 1.5."
+  },
+  "units": {
+    "dimension": {
+      "mass": "Weight",
+      "volume": "Volume",
+      "length": "Length",
+      "area": "Area",
+      "count": "Count"
+    },
+    "label": {
+      "unit": "units"
+    },
+    "name": "{{name}} ({{abbr}})",
+    "fullName": {
+      "g": "Grams",
+      "mg": "Milligrams",
+      "kg": "Kilograms",
+      "oz": "Ounces",
+      "lb": "Pounds",
+      "ml": "Milliliters",
+      "l": "Liters",
+      "tsp": "Teaspoons",
+      "tbsp": "Tablespoons",
+      "fl_oz": "Fluid ounces",
+      "cup": "Cups",
+      "gal": "Gallons",
+      "mm": "Millimeters",
+      "cm": "Centimeters",
+      "m": "Meters",
+      "in": "Inches",
+      "ft": "Feet",
+      "yd": "Yards",
+      "cm2": "Square centimeters",
+      "m2": "Square meters",
+      "in2": "Square inches",
+      "ft2": "Square feet",
+      "unit": "Units"
+    }
+  },
+  "business": {
+    "setup": {
+      "title": "Set up your business",
+      "description": "Before adding ingredients, enter your business details. You only need to do this once.",
+      "name": "Business name",
+      "countryCode": "Country code",
+      "countryHint": "Two letters, for example CO or MX.",
+      "currencyCode": "Currency code",
+      "currencyHint": "Three letters, for example COP or USD.",
+      "unitSystem": "Preferred unit system",
+      "category": "Business type",
+      "submit": "Save business",
+      "section": {
+        "region": "Country and currency",
+        "operation": "How you work"
+      }
+    },
+    "unitSystem": {
+      "metric": "Metric",
+      "imperial": "Imperial"
+    },
+    "category": {
+      "food": "Food",
+      "handmade": "Handmade",
+      "services": "Services",
+      "resale": "Resale"
+    }
   },
   "home": {
     "title": "Home"
   },
   "ingredients": {
-    "title": "Ingredients"
+    "title": "Ingredients",
+    "add": "Add ingredient",
+    "empty": "Add the raw materials you buy so Valorarte can track stock and costs.",
+    "lowStockAt": "Low stock at {{quantity}} {{unit}}",
+    "tracksLotsBadge": "Lots and expiry",
+    "new": {
+      "title": "New ingredient",
+      "name": "Name",
+      "category": "Category",
+      "dimension": "Measurement type",
+      "unit": "Unit",
+      "threshold": "Low-stock alert",
+      "tracksLots": "Track lots and expiry dates",
+      "notes": "Notes",
+      "businessMissing": "The business for this ingredient no longer exists. Go back and try again.",
+      "unitHint": "Used to enter and show quantities.",
+      "thresholdHint": "You’ll be alerted when stock falls to this amount.",
+      "save": "Save ingredient",
+      "discardTitle": "Discard this ingredient?",
+      "discardMessage": "The information you entered will be lost.",
+      "keepEditing": "Keep editing",
+      "discard": "Discard",
+      "tracksLotsHint": "Turn on if this ingredient is perishable or needs traceability.",
+      "section": {
+        "measure": "Measurement",
+        "inventory": "Inventory",
+        "optional": "Optional details"
+      }
+    },
+    "emptyTitle": "No ingredients yet",
+    "count_one": "{{count}} ingredient",
+    "count_other": "{{count}} ingredients",
+    "loading": "Loading ingredients…"
   },
   "products": {
     "title": "Products"
@@ -21,13 +137,13 @@
     "title": "Settings",
     "appearance": {
       "title": "Appearance",
-      "system": "Follow system",
+      "system": "System",
       "light": "Light",
       "dark": "Dark"
     },
     "language": {
       "title": "Language",
-      "system": "System language",
+      "system": "System",
       "es": "Español",
       "en": "English"
     }

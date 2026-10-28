@@ -191,9 +191,13 @@ Una operación que modifica varias tablas debe utilizar una transacción cuando 
 
 Si ocurre un error, revertir la operación completa.
 
-Las cantidades y los importes deben almacenarse con precisión adecuada. Evitar utilizar aritmética binaria de punto flotante sin control para dinero.
+Precisión numérica (detalle en `BUSINESS-RULES.md` §19):
 
-Definir una estrategia explícita de redondeo.
+- Almacenamiento: importes monetarios definitivos como enteros en la unidad mínima de la moneda. Costos unitarios normalizados, cantidades físicas y tasas con escala decimal fija de 6 posiciones.
+- Cálculo: aritmética decimal precisa, sin punto flotante binario y sin limitar los resultados intermedios a la escala de almacenamiento.
+- Redondeo: `ROUND_HALF_UP` solo cuando una regla de negocio cuantiza un resultado o produce un importe definitivo.
+
+El redondeo debe implementarse en un único módulo de dominio, no en componentes ni repositorios.
 
 ## 8. Datos derivados
 
@@ -202,7 +206,7 @@ Los valores calculados deben tener una fuente de verdad clara.
 Ejemplos:
 
 - Stock actual: movimientos registrados o una proyección consistente de ellos.
-- Costo promedio: existencias valoradas según las reglas del dominio.
+- Costo promedio: derivado del valor acumulado y la cantidad acumulada del inventario (`BUSINESS-RULES.md` §5). Un costo unitario guardado es solo un snapshot.
 - Margen: cálculo a partir de ingresos sin impuestos y costos.
 - Saldo pendiente: total adeudado menos pagos y ajustes válidos.
 

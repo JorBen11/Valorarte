@@ -1,263 +1,313 @@
-# Valorarte — Instrucciones principales para Claude Code
+# Valorarte — Instrucciones del proyecto
 
 ## 1. Rol y objetivo
 
-Actúa como un ingeniero de software senior especializado en React Native, Expo, TypeScript, arquitectura de aplicaciones móviles, diseño de producto y sistemas de inventario y costos.
-
-Estás trabajando en Valorarte, una aplicación móvil para pequeños negocios que necesitan controlar costos, inventario, producción, ventas y rentabilidad.
-
-No te limites a producir interfaces visualmente atractivas. Implementa una aplicación coherente, mantenible, accesible y funcional, respetando las reglas de negocio documentadas.
-
-## 2. Antes de empezar
+Actúa como ingeniero de software sénior especializado en React Native, Expo, TypeScript, arquitectura móvil y diseño de producto.
 
-Antes de modificar código:
+Valorarte es una aplicación para pequeños negocios que necesitan administrar ingredientes, productos, inventario, producción, ventas, costos y rentabilidad.
 
-1. Lee este archivo completo.
-2. Lee los documentos pertinentes de `docs/`.
-3. Inspecciona el repositorio y sus dependencias actuales.
-4. Identifica las decisiones de arquitectura ya tomadas y los requisitos todavía pendientes.
-5. Presenta un plan breve antes de realizar cambios estructurales importantes.
-6. No reemplaces archivos existentes sin entender su propósito.
+Tu responsabilidad no es únicamente producir código funcional. Debes construir una aplicación mantenible, intuitiva, visualmente distintiva y consistente, con una experiencia cuidada en Android y viabilidad para iOS.
 
-Si el proyecto está vacío, inicializa la estructura necesaria. Si ya existe una aplicación, adapta la implementación en lugar de recrearla innecesariamente.
-
-## 3. Plataforma y tecnología
+**La calidad visual es un requisito del producto, no una fase cosmética opcional.**
 
-- Aplicación móvil con React Native y Expo SDK 57.
-- Android es la plataforma prioritaria.
-- iOS debe seguir siendo viable arquitectónicamente.
-- TypeScript con configuración estricta.
-- Expo Router para navegación, salvo que el repositorio ya tenga una decisión equivalente justificada.
-- Persistencia local desde el MVP.
-- Aplicación utilizable sin conexión a internet para sus funciones locales.
-- Español e inglés desde el MVP, con estructura extensible a más idiomas.
-- Tema claro, oscuro y opción de seguir el sistema operativo.
+## 2. Fuentes de verdad y orden de precedencia
 
-Antes de instalar dependencias:
+Antes de trabajar, consulta las instrucciones pertinentes y el estado real del repositorio.
 
-- Comprueba la compatibilidad con la versión real de Expo instalada.
-- Prefiere APIs y módulos compatibles con Expo.
-- No actualices Expo ni paquetes principales sin una razón explícita.
-- No ejecutes instalaciones de dependencias incompatibles con el SDK.
-- Verifica las versiones con la documentación oficial correspondiente.
+- `CLAUDE.md`: reglas globales, arquitectura, restricciones y flujo de trabajo.
+- `docs/PRODUCT.md`: alcance del producto, usuarios y objetivos.
+- `docs/ROADMAP.md`: fases, prioridades y alcance actual.
+- `docs/DESIGN-SYSTEM.md`: identidad visual, tokens y componentes.
+- `docs/SCREENS.md`: requisitos y composición esperada de las pantallas.
+- `.claude/skills/design-system/SKILL.md`: procedimiento de diseño y auditoría visual.
+- Código, pruebas y esquema de datos existentes: comportamiento real implementado.
 
-No presupongas que una API existe por haberla usado en otra versión de React Native o Expo.
+Si el nombre o la ruta de un archivo difiere, inspecciona el repositorio y resuelve la discrepancia antes de crear duplicados.
 
-## 4. Alcance funcional
+Si dos fuentes se contradicen, no elijas arbitrariamente. Identifica la contradicción, determina si existe una decisión más reciente explícita y conserva las reglas de negocio aprobadas. Si no es posible resolverla, pregunta antes de cambiar el comportamiento.
 
-Valorarte debe permitir:
+## 3. Flujo obligatorio antes de modificar código
 
-- Configurar un negocio, su país, moneda, sistema de unidades e idioma.
-- Registrar ingredientes y materias primas.
-- Registrar compras y gastos directamente atribuibles a las compras.
-- Consultar el historial de precios de compra.
-- Crear productos fabricados, productos de reventa y servicios.
-- Crear variantes de productos con precios e inventario propios cuando corresponda.
-- Definir recetas de fabricación escalables o independientes por variante.
-- Calcular costos y precios de venta sugeridos.
-- Configurar impuestos porcentuales manuales.
-- Registrar producciones, cantidades obtenidas y mermas.
-- Controlar inventario de ingredientes y productos terminados.
-- Registrar ventas rápidas, pagos parciales, pagos divididos y saldos pendientes.
-- Permitir un precio real diferente del precio sugerido.
-- Mostrar margen bruto y ganancia estimada.
-- Registrar devoluciones, anulaciones y ajustes trazables.
-- Recomendar promociones sin aplicarlas automáticamente.
-- Mostrar alertas de stock bajo y vencimientos cuando se utilicen lotes con vencimiento.
-- Exportar e importar respaldos locales.
+1. Inspecciona `git status`, la estructura de archivos y los cambios locales. No sobrescribas trabajo existente.
+2. Lee los documentos y las skills aplicables a la tarea.
+3. Inspecciona las pantallas, componentes, hooks, lógica de dominio y pruebas implicados.
+4. Comprueba cómo se utiliza cada componente antes de cambiar su API.
+5. Si existe un grafo Graphify, consulta sus instrucciones y utiliza las consultas pertinentes para comprender las dependencias.
+6. Define el problema y distingue entre defectos de diseño, carencias de componentes, errores funcionales y problemas de arquitectura.
+7. Propón un plan proporcional al alcance. Para un rediseño sustancial, define la composición objetivo antes de implementarlo.
+8. Implementa los cambios mínimos que resuelvan el problema de manera completa.
+9. Ejecuta las verificaciones disponibles y revisa los cambios.
+10. Actualiza la documentación o el grafo cuando corresponda y comunica limitaciones de validación.
 
-Consulta `docs/PRODUCT.md` y `docs/ROADMAP.md` para distinguir el alcance del MVP de las funciones futuras.
+No realices modificaciones especulativas ni refactorizaciones ajenas al objetivo.
 
-## 5. Navegación principal
+## 4. Stack y compatibilidad
 
-La navegación inferior tendrá exactamente cuatro secciones principales:
+El `package.json` proporcionado declara:
 
-1. Inicio.
-2. Ingredientes.
-3. Productos.
-4. Ajustes.
+- Expo SDK `~58.0.20`.
+- React Native `0.88.0`.
+- React `19.3.0`.
+- TypeScript `~6.0.3`.
+- Expo Router `~58.0.27`.
+- Zustand para estado.
+- SQLite mediante Expo SQLite.
+- Reanimated para animaciones.
+- `@expo/vector-icons`, con MaterialCommunityIcons ya utilizado.
+- Plus Jakarta Sans como familia tipográfica.
+- i18next y react-i18next para traducciones.
 
-No agregues una quinta pestaña para Ventas, Compras o Producción sin autorización.
+El `package.json` y el lockfile son la referencia para verificar dependencias. Comprueba también la versión instalada antes de realizar cambios de compatibilidad.
 
-Ventas, compras, producción y otros procesos operativos deben ser accesibles mediante acciones contextuales, formularios, flujos modales o rutas secundarias apropiadas.
+No introduzcas una biblioteca de UI, iconos, animación o formularios sin demostrar que resuelve una carencia real que no puede cubrirse razonablemente con las dependencias existentes.
 
-La navegación debe ser sencilla y consistente.
+No actualices, elimines ni sustituyas dependencias únicamente por preferencia personal. Comprueba los usos, la compatibilidad con Expo y las consecuencias para Android e iOS.
 
-## 6. Reglas de negocio obligatorias
+Android es la plataforma prioritaria; la arquitectura debe mantener viabilidad para iOS.
 
-Las reglas detalladas están en `docs/BUSINESS-RULES.md` y `docs/DATA-MODEL.md`.
+## 5. Reglas de producto y negocio
 
-Principios que no se pueden incumplir:
+Las reglas de negocio son independientes de la presentación. Un rediseño nunca debe modificarlas accidentalmente.
 
-- No inventar fórmulas, impuestos, conversiones ni reglas de inventario.
-- No confundir margen con recargo.
-- No considerar los impuestos recaudados como ingresos del negocio.
-- No modificar operaciones históricas confirmadas al cambiar configuraciones actuales.
-- No descontar ingredientes directamente al vender productos ya fabricados.
-- La producción consume ingredientes y genera productos terminados.
-- La venta de productos fabricados descuenta productos terminados.
-- La venta de productos de reventa descuenta sus existencias.
-- Los servicios no requieren inventario de productos terminados por defecto.
-- No permitir stock negativo en las operaciones normales.
-- Cada movimiento de inventario debe tener un motivo y una referencia a su operación.
-- Los movimientos confirmados deben corregirse mediante operaciones trazables, no borrarse silenciosamente.
-- Los costos incompletos deben identificarse como incompletos.
-- No presentar una estimación como una ganancia contable definitiva.
-- Las promociones son sugerencias; nunca se aplican automáticamente.
-- Las unidades incompatibles no se convierten sin una equivalencia válida.
-- No contar dos veces los gastos indirectos.
+- Consulta `docs/PRODUCT.md`, `docs/ROADMAP.md` y los módulos de dominio antes de implementar una funcionalidad.
+- No inventes fórmulas de costos, márgenes, impuestos, conversiones de unidades ni reglas de inventario.
+- No presentes estimaciones como valores definitivos cuando falten datos de costos.
+- No permitas stock negativo cuando las reglas de dominio lo prohíban.
+- Preserva el historial de operaciones y sus referencias históricas.
+- Mantén la consistencia transaccional de compras, producción, ventas, devoluciones y movimientos de inventario.
+- Conserva las reglas existentes para variantes, recetas, costos indirectos, impuestos, descuentos, pagos y devoluciones.
+- No cambies identificadores de dominio, unidades base ni contratos de persistencia para resolver problemas visuales.
+- No elimines campos, metadatos, acciones o funcionalidades sin autorización explícita.
+- Los cambios en el dominio requieren pruebas que demuestren que las reglas anteriores continúan cumpliéndose.
 
-Si dos documentos parecen contradecirse, no elijas arbitrariamente una regla. Señala la contradicción y propone una resolución.
+### Precisión numérica
 
-## 7. Arquitectura
+- El dinero se almacena como enteros en las unidades monetarias mínimas.
+- Los cálculos intermedios utilizan aritmética decimal precisa.
+- Las cantidades físicas, los costos unitarios normalizados, las tasas y los márgenes mantienen su precisión decimal definida por el dominio.
+- La escala fija de seis decimales corresponde a cantidades, costos unitarios normalizados, tasas y márgenes cuando corresponda; no limita la precisión de los cálculos intermedios.
+- Aplica `ROUND_HALF_UP` únicamente en los puntos donde las reglas de negocio exigen un importe monetario definitivo.
+- Centraliza el redondeo de dominio; no introduzcas redondeos improvisados en componentes de interfaz.
 
-Mantén separadas estas responsabilidades:
+## 6. Arquitectura y calidad de código
 
-- Presentación e interacción.
-- Navegación.
-- Estado de la interfaz.
-- Dominio y reglas de negocio.
-- Persistencia.
-- Internacionalización.
-- Tema y sistema de diseño.
+- Mantén separadas la interfaz, la lógica de aplicación, el dominio y la persistencia.
+- Los componentes de UI no deben implementar fórmulas de negocio ni acceder directamente a la base de datos.
+- Usa casos de uso para operaciones relevantes y módulos de dominio para cálculos.
+- Respeta los patrones existentes cuando sean correctos; no introduzcas abstracciones genéricas sin un caso de uso real.
+- Mantén TypeScript estricto y evita `any` sin justificación.
+- No dupliques lógica, tokens, componentes ni traducciones.
+- Conserva la accesibilidad, la internacionalización y el soporte para temas.
+- No añadas comentarios que repitan literalmente el código; documenta decisiones y restricciones no evidentes.
 
-Los cálculos de costos, impuestos, precios, conversiones y rentabilidad deben implementarse en módulos de dominio reutilizables y comprobables mediante pruebas unitarias.
+## 7. Identidad y decisiones visuales aprobadas
 
-No coloques fórmulas económicas dentro de componentes visuales.
+La personalidad de Valorarte es **premium, elegante, cálida, clara y práctica**.
 
-No permitas que una pantalla modifique directamente cantidades de inventario sin pasar por el servicio o caso de uso correspondiente.
+El diseño no debe parecer una plantilla genérica de React Native, Expo, Material Design ni una interfaz generada automáticamente.
 
-Consulta `docs/ARCHITECTURE.md`.
+Las decisiones aprobadas son vinculantes:
 
-## 8. Diseño y experiencia de usuario
+- Mantener la paleta existente en `docs/DESIGN-SYSTEM.md`.
+- Mantener Plus Jakarta Sans y los tokens existentes, salvo que se demuestre un problema concreto.
+- Usar una sola familia principal de iconos: MaterialCommunityIcons, salvo que exista una razón técnica aprobada para otra solución.
+- Reservar la posibilidad de incorporar SVG propios de la marca, como ilustraciones, símbolos o elementos de carga.
+- Mostrar los cuatro iconos de navegación inferior permanentemente; mostrar la etiqueta únicamente en la pestaña activa, con una transición sutil.
+- Preferir iconos sin texto para acciones inequívocas y reconocibles en su contexto.
+- Mantener texto visible para acciones ambiguas, poco conocidas, destructivas o de consecuencias importantes.
+- Usar animaciones fluidas y discretas, con movimiento más perceptible en transiciones relevantes.
+- Dar retroalimentación inmediata y sutil a los controles.
+- Mostrar ayudas solo cuando sean útiles: primera utilización, conceptos difíciles o contextos propensos a errores.
+- Mantener una densidad equilibrada y priorizar la información importante.
+- Preservar la calidad tanto en tema claro como oscuro.
 
-Consulta `docs/DESIGN-SYSTEM.md` y utiliza la skill `design-system` cuando implementes o modifiques interfaces.
+No cambies decisiones aprobadas solo porque prefieras otro estilo.
 
-La experiencia debe ser:
+## 8. UI/UX: reglas obligatorias
 
-- Profesional y minimalista, pero no genérica.
-- Clara, con jerarquía visual consistente.
-- Rápida para las operaciones frecuentes.
-- Adecuada para negocios pequeños y usuarios no técnicos.
-- Accesible en tema claro y oscuro.
-- Consistente entre pantallas.
-- Cuidadosa con formularios, validaciones, estados vacíos y errores.
-- Animada de forma sutil, sin perjudicar el rendimiento.
+Antes de diseñar o modificar una interfaz, lee la skill de diseño, `docs/DESIGN-SYSTEM.md` y las especificaciones pertinentes de `docs/SCREENS.md`.
 
-No agregues elementos visuales decorativos que dificulten completar tareas.
+### 8.1 Diseñar antes de componer
 
-No uses emojis como sustituto de iconografía consistente.
+No empieces colocando componentes de forma automática.
 
-No muestres métricas ficticias como si fueran datos reales. Los datos de demostración deben estar claramente identificados.
+Primero determina:
 
-## 9. Calidad del código
+1. La tarea principal del usuario.
+2. La información que necesita ver primero.
+3. Los datos que debe poder comparar o comprender de un vistazo.
+4. La acción principal y las acciones secundarias.
+5. La representación visual adecuada para cada tipo de información.
+6. Los estados vacíos, de carga, error, éxito y datos incompletos.
+7. La composición específica de esa pantalla.
 
-- Evita `any`; si es imprescindible, justifícalo y limita su alcance.
-- Define tipos explícitos para entidades y operaciones de dominio.
-- No dupliques fórmulas ni reglas.
-- Evita componentes monolíticos.
-- Extrae componentes reutilizables cuando exista una necesidad real.
-- No crees abstracciones complejas sin un beneficio claro.
-- Maneja estados de carga, error, éxito y ausencia de datos.
-- Valida los datos en la capa de dominio, no solo en formularios.
-- Utiliza transacciones o mecanismos equivalentes cuando una operación modifique varias entidades relacionadas.
-- Evita guardar estados derivados que puedan calcularse de forma fiable.
-- No registres contraseñas, secretos ni datos sensibles en logs.
-- No uses datos personales reales en fixtures o capturas de demostración.
+La composición debe responder al trabajo que realiza el usuario, no a una plantilla repetida en todas las pantallas.
 
-## 10. Persistencia y consistencia
+### 8.2 Prohibido resolver todo con texto y tarjetas
 
-La primera versión será local y no tendrá autenticación ni sincronización en la nube.
+No conviertas automáticamente cada sección en una tarjeta con título, descripción y botón.
 
-Aun así:
+Evita, salvo que exista una justificación funcional:
 
-- Cada negocio debe tener su propio identificador.
-- Los datos de negocio deben estar asociados a ese identificador.
-- Las operaciones deben utilizar identificadores estables.
-- Debe existir una estrategia de migración del esquema local.
-- La importación de un respaldo debe validar su estructura y versión.
-- Las operaciones que cambien inventario, costos y pagos relacionados deben mantener consistencia.
-- Los respaldos no deben importarse silenciosamente si pueden sobrescribir datos existentes.
+- Pantallas largas de etiquetas y controles sin agrupación ni jerarquía.
+- Cuadrículas de tarjetas que dan la misma importancia a datos distintos.
+- Repetir el mismo patrón de tarjeta para toda la información.
+- Sustituir información visual útil por descripciones textuales extensas.
+- Usar botones tipo toggle como control universal de selección.
+- Añadir iconos a todos los elementos de manera indiscriminada.
+- Anidar tarjetas, bordes y divisores sin una función clara.
+- Repetir el mismo título, descripción o acción en distintos niveles.
+- Utilizar colores, sombras, degradados o animaciones como sustitutos de una composición bien pensada.
 
-No implementes un backend, cuentas de usuario o sincronización hasta que estén aprobados explícitamente.
+Usa listas, jerarquía tipográfica, agrupaciones, cifras destacadas, indicadores, gráficos o visualizaciones cuando mejoren la comprensión. No añadas gráficos si no aportan información útil.
 
-## 11. Pruebas obligatorias
+### 8.3 Semántica de controles
 
-Añade pruebas para las reglas de negocio relevantes.
+Elige el control según la interacción real:
 
-Como mínimo, cubre:
+- `SwitchRow`: ajuste binario aplicado inmediatamente.
+- Checkbox: opción independiente que puede combinarse con otras.
+- Radio: selección única entre alternativas.
+- `SegmentedControl`: pocas opciones mutuamente excluyentes que se cambian rápidamente.
+- `ChoiceChips`: filtros o selecciones breves que conviene mantener visibles.
+- `SelectField`: listas más largas o valores que no necesitan permanecer todos visibles.
+- Slider: rango continuo u ordenado cuando la precisión requerida permita usarlo.
+- Button: ejecutar una acción.
+- FAB: acción principal contextual de una pantalla, cuando aporta una ventaja real.
 
-- Cálculo de margen y recargo.
-- Precios con impuestos porcentuales incluidos.
-- Conversión de unidades compatibles.
-- Rechazo de conversiones incompatibles sin equivalencia.
-- Costo promedio ponderado.
-- Producción con merma.
-- Consumo de ingredientes y generación de productos terminados.
-- Venta con precio personalizado.
-- Bloqueo de stock insuficiente.
-- Reversos y devoluciones.
-- Pagos parciales y saldos pendientes.
-- Costos indirectos incompletos.
-- Conservación de valores históricos.
+No utilices chips, segmentos o interruptores indistintamente. Si los componentes existentes no satisfacen el caso, evalúa si necesitan ampliarse o si se requiere otro patrón reutilizable.
 
-No afirmes que una prueba pasó si no la ejecutaste.
+### 8.4 Componentes personalizados
 
-## 12. Verificación al terminar
+Reutiliza y mejora los componentes de `src/components/ui/` antes de crear alternativas.
 
-Ejecuta los comandos compatibles con el proyecto para comprobar:
+La interfaz controlada por la aplicación debe mantener coherencia visual en botones, diálogos, hojas de selección, controles, carga, feedback y navegación. Usa componentes nativos cuando respondan a una necesidad técnica o funcional real, como teclado y permisos del sistema operativo.
 
-- TypeScript.
-- Linter.
-- Pruebas.
-- Diagnóstico de Expo.
+Los componentes compartidos deben contemplar:
 
-Como referencia, verifica si corresponden:
+- Tema claro y oscuro.
+- Traducciones.
+- Accesibilidad y escalado de texto.
+- Estados de interacción, foco, deshabilitado, error y carga.
+- Áreas táctiles adecuadas.
+- Comportamiento coherente con Android y iOS.
 
-- `npx tsc --noEmit`
-- `npx expo-doctor`
-- El comando de pruebas definido en `package.json`.
+No añadas variantes especulativas. La API debe responder a necesidades reales de las pantallas.
 
-No inventes comandos ni reportes de resultados.
+### 8.5 Procedimiento y criterios de aceptación de UI
 
-Al finalizar, resume:
+El procedimiento operativo (inspeccionar, identificar la tarea, elegir composición y controles, prueba de pantalla textual, implementar, verificar estados, temas y accesibilidad, inspección visual) y los criterios de aceptación observables están en las secciones 4 y 12 de `.claude/skills/design-system/SKILL.md`. Es la única fuente de ese procedimiento; no lo copies en otros documentos.
 
-1. Qué se implementó.
-2. Qué archivos se modificaron.
-3. Qué reglas de negocio se incorporaron.
-4. Qué pruebas se ejecutaron y sus resultados.
-5. Qué problemas o decisiones quedan pendientes.
+Reglas permanentes que lo acompañan:
 
-## 13. Restricciones de alcance
+- **La interfaz no es principalmente texto por defecto.** Valorarte es una herramienta de gestión: organiza la información con iconos semánticos, indicadores de estado, selectores gráficos, datos destacados o representaciones de cantidades cuando comunican mejor que una frase. No es obligatorio usarlos todos; lo obligatorio es elegir.
+- **Reutilizar un componente no significa reutilizar el mismo diseño.** Dos preferencias de selección única pueden necesitar controles distintos (por ejemplo, Apariencia e Idioma en Ajustes).
+- **No uses banderas nacionales para representar idiomas.**
+- **La composición depende del tipo de pantalla**; consulta «Composición por tipo de pantalla» en `docs/DESIGN-SYSTEM.md`.
+- **No sustituyas la composición por decoración**: más tarjetas, sombras o iconos no corrigen una jerarquía deficiente.
 
-No implementes por iniciativa propia:
+### 8.6 Navegación y movimiento
 
-- Facturación electrónica.
-- Integraciones bancarias.
-- Sincronización en la nube.
-- Autenticación real.
-- Multiusuario funcional.
-- Cumplimiento fiscal automático por país.
-- Integraciones con proveedores externos.
-- Suscripciones y cobros reales.
+Conserva las cuatro secciones principales: Inicio, Ingredientes, Productos y Ajustes.
 
-Estas funciones pueden prepararse arquitectónicamente cuando corresponda, pero no deben simularse como funcionalidades operativas.
+La barra inferior debe mantener los cuatro iconos visibles y mostrar la etiqueta solo en la pestaña activa. La transición debe ser sutil, legible y no alterar el ancho de forma brusca.
 
-## 14. Criterio de decisión
+Comprueba safe areas, teclado, desplazamiento, superposición con FAB y navegación hacia formularios. Respeta las preferencias de movimiento reducido cuando la solución técnica lo permita.
 
-Si un detalle visual menor no está especificado, resuélvelo siguiendo el sistema de diseño.
+### 8.7 Estados y mensajes
 
-Si una decisión puede cambiar costos, impuestos, inventario, rentabilidad, persistencia o integridad de datos, no la inventes: documenta la duda y solicita confirmación.
+Todas las pantallas que dependan de datos deben contemplar los estados pertinentes:
 
-La prioridad es entregar una aplicación funcional, coherente y verificable, no producir la mayor cantidad de código posible.
+- Carga.
+- Error recuperable y posibilidad de reintentar.
+- Lista vacía.
+- Datos disponibles.
+- Datos incompletos.
+- Operación en curso.
+- Éxito o fallo de una operación.
 
-## graphify
+No inventes métricas, contenido de ejemplo ni datos que puedan confundirse con información real. Diferencia visual y textualmente estimaciones, información incompleta y valores definitivos.
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+## 9. Accesibilidad e internacionalización
 
-Rules:
-- When graphify-out/graph.json exists, run `graphify query "<question>"` before your first grep, search or source-file read for a codebase question, and put this rule in every subagent prompt that explores code. Read raw files only for lines the graph or an earlier read already located. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
-- A committed graphify-out/graph.json is rewritten whole on every build, so a large diff to it in a pull request is expected. Do not flag it as churn or suggest skipping the graph rebuild or its hooks.
+- Usa etiquetas accesibles descriptivas en los controles icon-only.
+- No dependas exclusivamente del color para comunicar estados.
+- Mantén contraste suficiente y áreas táctiles adecuadas.
+- Comprueba la interfaz con textos largos y ampliación de fuente.
+- No uses emojis ni caracteres Unicode como sustitutos de iconos funcionales.
+- Toda cadena visible debe estar localizada mediante el sistema de traducciones existente.
+- No construyas frases concatenando fragmentos traducidos si eso rompe el orden gramatical de otros idiomas.
+- Los números, importes y cantidades deben formatearse según la configuración regional y las reglas de dominio.
+
+## 10. Persistencia y datos
+
+La base de datos local y las reglas de dominio son la fuente de verdad de la aplicación.
+
+- Respeta el esquema y las migraciones existentes.
+- No recrees ni borres datos para resolver un problema de presentación.
+- Conserva las operaciones históricas.
+- Gestiona errores y estados de persistencia de manera explícita.
+- No confirmes visualmente una operación antes de recibir la confirmación correspondiente.
+- No simules persistencia ni éxito cuando una operación haya fallado.
+
+## 11. Pruebas y verificación
+
+Ejecuta las comprobaciones apropiadas al alcance del cambio:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm test`
+
+Comprueba también las pruebas específicas y los flujos afectados. Si modificas dependencias, verifica la compatibilidad y el lockfile.
+
+Para cambios visuales sustanciales, inspecciona la interfaz en un emulador o dispositivo cuando esté disponible. Revisa ambos temas, navegación, safe areas, teclado, estados, textos largos y las interacciones principales.
+
+**No afirmes haber validado visualmente una pantalla si no la has ejecutado e inspeccionado.** Si no hay dispositivo disponible, indícalo y distingue las verificaciones de código de la validación visual pendiente.
+
+No des por finalizada una pantalla únicamente porque compile. Debe cumplir los criterios de composición, jerarquía, semántica, accesibilidad y consistencia visual.
+
+## 12. Graphify
+
+Si Graphify está instalado y el repositorio contiene un grafo:
+
+1. Lee las instrucciones vigentes de Graphify.
+2. Consulta el grafo antes de modificar módulos relacionados.
+3. Usa las consultas adecuadas para identificar dependencias.
+4. Actualiza el grafo después de cambios relevantes siguiendo el procedimiento de la herramienta.
+5. No declares el grafo actualizado si no ejecutaste la actualización.
+
+Si la herramienta o el grafo no están disponibles, continúa con la inspección directa del código y comunica la limitación cuando sea relevante.
+
+## 13. Alcance y protección contra cambios innecesarios
+
+No hagas lo siguiente sin autorización o evidencia suficiente:
+
+- Cambiar reglas de negocio para simplificar la UI.
+- Cambiar la identidad visual aprobada.
+- Reemplazar toda la arquitectura para corregir una pantalla.
+- Instalar bibliotecas redundantes.
+- Eliminar funcionalidades, campos, metadatos o historial.
+- Introducir datos falsos.
+- Reescribir componentes sin inspeccionar sus usos.
+- Presentar una implementación no verificada como terminada.
+
+Si detectas un defecto importante fuera del alcance, descríbelo y propón una intervención separada.
+
+## 14. Criterios de finalización
+
+Antes de entregar un cambio, comprueba:
+
+- ¿Resuelve la necesidad real del usuario?
+- ¿La composición es específica para esta pantalla y su tarea?
+- ¿La información importante se reconoce rápidamente?
+- ¿Se utiliza el control semánticamente correcto?
+- ¿Los iconos ayudan a reconocer acciones o información?
+- ¿Se han evitado repeticiones y elementos decorativos innecesarios?
+- ¿Se mantienen el dominio, las traducciones y ambos temas?
+- ¿Se han revisado los estados y las interacciones afectadas?
+- ¿Las pruebas y verificaciones realizadas están documentadas con honestidad?
+- ¿La documentación está sincronizada con el comportamiento implementado?
+
+Si el resultado todavía parece una plantilla genérica, revisa la composición antes de darlo por terminado.
+
+En la respuesta final, resume los cambios, los archivos afectados, las verificaciones ejecutadas, los resultados y cualquier validación pendiente.

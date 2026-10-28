@@ -4,7 +4,7 @@
 
 - Los cálculos deben implementarse en el dominio, no en componentes visuales.
 - Las fórmulas deben tener pruebas unitarias.
-- Los importes monetarios requieren precisión y reglas explícitas de redondeo.
+- Los importes monetarios requieren precisión y reglas explícitas de redondeo (ver §19).
 - Las operaciones confirmadas conservan sus valores históricos.
 - Los resultados estimados deben identificarse como tales.
 - Nunca inventar datos faltantes.
@@ -42,20 +42,35 @@ Cada ingrediente debe tener una dimensión compatible:
 - Conteo.
 - Otras dimensiones solo si se implementan explícitamente.
 
-Las conversiones entre unidades de una misma dimensión pueden ser automáticas cuando la equivalencia sea conocida.
+Esta sección es la fuente de detalle sobre unidades, cantidades normalizadas y conversiones. Decisión aprobada (2026-10-25).
 
-Ejemplos:
+### Unidades base del MVP
 
-- kg ↔ g.
-- lb ↔ oz.
-- L ↔ ml.
-- unidades ↔ unidades.
+| Dimensión | Unidad base |
+|---|---|
+| Masa | gramo (`g`) |
+| Volumen | mililitro (`ml`) |
+| Longitud | milímetro (`mm`) |
+| Área | centímetro cuadrado (código interno `cm2`; etiqueta de presentación `cm²`) |
+| Conteo | unidad (`unit`) |
 
-No convertir masa a volumen sin una densidad válida para el ingrediente.
+### Cantidad normalizada
 
-No asumir que una unidad de producto representa una cantidad física universal.
+- La cantidad normalizada siempre es la cantidad expresada en la unidad base de su dimensión, sea cual sea la unidad usada en la compra, la receta, la producción o la visualización.
+- Cambiar la unidad de visualización no altera la cantidad almacenada ni el historial de movimientos.
 
-Los factores de conversión deben ser explícitos y verificables.
+### Conversiones
+
+- Las conversiones entre unidades de una misma dimensión pueden ser automáticas cuando la equivalencia sea conocida. Ejemplos: kg ↔ g, lb ↔ oz, L ↔ ml, unidades ↔ unidades.
+- Los factores de conversión deben ser explícitos y verificables y conservar precisión suficiente para las operaciones del dominio. No se truncan automáticamente a seis decimales antes de convertir. La escala de almacenamiento de §19.1 no se aplica a los factores de conversión.
+- Cada conversión parte de la cantidad original y de un factor definido. No encadenar conversiones sucesivas ni convertir a partir de un valor ya convertido.
+- No se convierte entre dimensiones distintas (por ejemplo, de masa a volumen) salvo que existan una densidad conocida y una regla explícita que lo permita. La densidad no forma parte del MVP.
+
+### Unidades integradas
+
+- El MVP admite únicamente las unidades integradas y sus conversiones explícitamente definidas y verificables.
+- Las unidades personalizadas y los modelos de presentaciones comerciales (cajas, paquetes o bolsas con contenido variable) quedan fuera del MVP.
+- No asumir que una unidad de producto representa una cantidad física universal.
 
 ## 4. Compras
 
@@ -103,13 +118,32 @@ Costo promedio nuevo =
 /
 (cantidad anterior + cantidad incorporada)
 
-Las cantidades deben expresarse en una unidad compatible.
+Las cantidades se expresan como cantidades normalizadas en la unidad base de su dimensión (§3).
 
 El costo total de una compra debe incluir los gastos atribuibles según la política definida, sin duplicarlos.
 
 Una salida normal de inventario no debe modificar arbitrariamente el costo unitario promedio de las existencias restantes.
 
-El sistema debe definir y probar cómo maneja inventario inicial, cantidades nulas, redondeo, devoluciones y correcciones.
+### Fuentes de verdad de la valoración
+
+Decisión aprobada (2026-10-25).
+
+- La cantidad acumulada y el valor acumulado del inventario de cada artículo son las fuentes de verdad para derivar el costo promedio ponderado.
+- El costo unitario promedio se calcula a partir del valor acumulado y de la cantidad acumulada correspondientes.
+- Un costo unitario almacenado con seis decimales, o un snapshot histórico, no sustituye automáticamente al valor acumulado ni sirve como fuente de verdad para cálculos posteriores.
+- La representación de los importes, la precisión de los cálculos y los puntos de redondeo siguen §19.
+
+### Pendiente de definir
+
+El sistema debe definir y probar cómo maneja estos casos. No están decididos:
+
+- Valoración del inventario inicial.
+- Valoración de las devoluciones que reingresan al inventario.
+- Valoración de los ajustes positivos y negativos.
+- Anulación de compras, incluida la de compras cuyo stock ya se consumió.
+- Tratamiento económico de la merma (ver también §6).
+- Destino de los residuos de redondeo entre el valor acumulado y los importes cuantizados. Se resolverá al implementar cada operación (§19.3).
+- Costo promedio cuando la cantidad acumulada es cero.
 
 ## 6. Recetas y producción
 
@@ -407,19 +441,63 @@ Las operaciones confirmadas deben conservar snapshots de:
 
 Las modificaciones de configuración futura no deben alterar el significado de una operación histórica.
 
-## 19. Redondeo
+## 19. Representación monetaria y redondeo
 
-Definir una estrategia explícita y centralizada para:
+Decisiones aprobadas: representación monetaria (2026-10-25) y escala decimal fija (2026-10-25).
 
-- Cantidades físicas.
-- Costos unitarios.
-- Importes monetarios.
-- Impuestos.
-- Totales.
+Se distinguen tres niveles: cómo se almacena un valor, con qué precisión se calcula y cuándo se redondea.
 
-Evitar redondear repetidamente valores intermedios cuando pueda alterar los resultados.
+### 19.1 Escala de almacenamiento
 
-Los cálculos internos deben mantener precisión suficiente; el formato visual puede limitar los decimales sin cambiar el valor almacenado.
+| Tipo de valor | Representación almacenada |
+|---|---|
+| Importe monetario definitivo (totales, subtotales, descuentos, impuestos, pagos, reembolsos) | Entero en la unidad mínima de la moneda correspondiente (por ejemplo, centavos para USD) |
+| Costo unitario normalizado (por ejemplo, costo por gramo o por mililitro) | Decimal con escala fija de 6 posiciones |
+| Cantidad física (ingredientes, inventario, rendimiento, merma) | Decimal con escala fija de 6 posiciones |
+| Tasa de impuesto y margen | Decimal con escala fija de 6 posiciones |
+| Valor de un movimiento de inventario (`totalValueDelta`) | Entero con 10^6 unidades internas por unidad mínima de la moneda (`DATA-MODEL.md` §16). No es un importe definitivo |
+
+- No asumir que todas las monedas tienen dos decimales: la unidad mínima depende de la moneda.
+- Un costo unitario normalizado no es un importe monetario definitivo y puede ser inferior a la unidad mínima de la moneda.
+- No asumir que las cantidades usan dos decimales ni redondearlas con las reglas monetarias.
+
+### 19.2 Precisión de los cálculos intermedios
+
+- Los cálculos intermedios utilizan aritmética decimal precisa. No usar aritmética binaria de punto flotante.
+- Un resultado intermedio no se limita a la escala de almacenamiento mientras forme parte de un cálculo en curso.
+- No redondear cada operación intermedia.
+
+### 19.3 Puntos de redondeo
+
+- Se aplica redondeo comercial `ROUND_HALF_UP` únicamente cuando una regla de negocio determina que un resultado debe cuantizarse a su escala de almacenamiento o convertirse en un importe monetario definitivo.
+- El redondeo de importes monetarios definitivos se aplica únicamente en los puntos de negocio definidos para cada operación, nunca de forma general.
+- Los residuos de redondeo entre el valor acumulado del inventario y los importes definitivos se resolverán al implementar las operaciones correspondientes. No existe todavía una regla de distribución y no debe inventarse.
+- La lógica de redondeo debe estar centralizada en el dominio.
+- El formato visual puede limitar los decimales mostrados sin cambiar el valor almacenado ni el calculado.
+
+### 19.4 Pendiente de definir
+
+Estas decisiones no determinan todavía:
+
+- Qué puntos concretos de cada flujo cuantizan o producen un importe definitivo (por ejemplo, si los impuestos se redondean por línea o sobre el total de la venta).
+- La fuente de la unidad mínima de cada moneda.
+- Si el costo unitario normalizado se expresa en la unidad principal de la moneda (USD por gramo) o en su unidad mínima (centavos por gramo). Con 6 decimales en la unidad principal, el valor más pequeño representable es 0,000001 USD por unidad base.
+- Si las tasas se expresan como fracción (`0.190000`) o como porcentaje (`19.000000`).
+- La precisión máxima de los cálculos intermedios para divisiones que no terminan (por ejemplo, 1/3 al escalar una receta o al calcular un promedio).
+
+
+#### Riesgos identificados con la escala de 6 decimales
+
+No modifican la decisión; requieren confirmación antes de implementar las operaciones afectadas.
+
+1. ~~Factores de conversión cuantizados.~~ Resuelto: los factores no se truncan a seis decimales (§3).
+2. ~~Cantidades almacenadas en unidades distintas de la base.~~ Resuelto: la cantidad normalizada siempre está en la unidad base y las conversiones parten de la cantidad original (§3). Una conversión a una unidad mayor solo para visualización puede seguir mostrando decimales redondeados, sin afectar a lo almacenado.
+3. **Costos unitarios muy pequeños.** Un insumo barato medido por unidad base (por ejemplo, agua por mililitro) puede tener un costo cercano a 0,000001 en la unidad principal de la moneda. En ese rango, almacenar el costo unitario con 6 decimales produce errores relativos grandes o un costo igual a cero. Con el valor acumulado como fuente de verdad (§5), esto afecta a los snapshots y a la visualización, no a la valoración. La unidad en que se expresa el costo unitario sigue pendiente.
+4. ~~Deriva del costo promedio ponderado.~~ Resuelto en cuanto a la fuente de verdad: valor y cantidad acumulados (§5). Sigue pendiente el destino de los residuos de redondeo.
+5. **Factor de escalado de recetas.** La decisión no menciona el factor de escalado de las recetas base (`base_scaled`). Si se cuantiza a 6 decimales (1/3 → `0.333333`), el consumo escalado deja de ser exacto.
+6. **Rango numérico.** Esto depende de la implementación. Si un valor con escala 6 se almacena como entero escalado y se lee como número de JavaScript, el máximo exacto es unos 9 × 10⁹ unidades. Afecta a cantidades muy grandes en unidades base pequeñas y a valores en monedas de valor nominal alto.
+
+No implementar estos puntos sin confirmación (ver §20).
 
 ## 20. Regla de prioridad
 

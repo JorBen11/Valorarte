@@ -6,13 +6,129 @@
     "settings": "Ajustes"
   },
   "common": {
-    "notAvailableYet": "Esta sección estará disponible en una próxima versión."
+    "notAvailableYet": "Esta sección estará disponible en una próxima versión.",
+    "loading": "Cargando",
+    "loadError": "Comprueba que la app tenga espacio de almacenamiento e inténtalo de nuevo.",
+    "saveError": "No se pudieron guardar los datos. Tus cambios siguen aquí; inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loadErrorTitle": "No se pudieron cargar tus datos",
+    "optionalField": "{{label}} (opcional)",
+    "close": "Cerrar",
+    "comingSoon": "Próximamente"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio.",
+    "invalid": "Introduce un valor válido.",
+    "unknownUnit": "Elige una unidad de la lista.",
+    "dimensionMismatch": "La unidad no corresponde al tipo de medida.",
+    "negative": "El valor no puede ser negativo.",
+    "invalidNumber": "Introduce un número, por ejemplo 1,5."
+  },
+  "units": {
+    "dimension": {
+      "mass": "Peso",
+      "volume": "Volumen",
+      "length": "Longitud",
+      "area": "Área",
+      "count": "Unidades"
+    },
+    "label": {
+      "unit": "ud."
+    },
+    "name": "{{name}} ({{abbr}})",
+    "fullName": {
+      "g": "Gramos",
+      "mg": "Miligramos",
+      "kg": "Kilogramos",
+      "oz": "Onzas",
+      "lb": "Libras",
+      "ml": "Mililitros",
+      "l": "Litros",
+      "tsp": "Cucharaditas",
+      "tbsp": "Cucharadas",
+      "fl_oz": "Onzas líquidas",
+      "cup": "Tazas",
+      "gal": "Galones",
+      "mm": "Milímetros",
+      "cm": "Centímetros",
+      "m": "Metros",
+      "in": "Pulgadas",
+      "ft": "Pies",
+      "yd": "Yardas",
+      "cm2": "Centímetros cuadrados",
+      "m2": "Metros cuadrados",
+      "in2": "Pulgadas cuadradas",
+      "ft2": "Pies cuadrados",
+      "unit": "Unidades"
+    }
+  },
+  "business": {
+    "setup": {
+      "title": "Configura tu negocio",
+      "description": "Antes de añadir ingredientes, introduce los datos de tu negocio. Solo tienes que hacerlo una vez.",
+      "name": "Nombre del negocio",
+      "countryCode": "Código de país",
+      "countryHint": "Dos letras, por ejemplo CO o MX.",
+      "currencyCode": "Código de moneda",
+      "currencyHint": "Tres letras, por ejemplo COP o USD.",
+      "unitSystem": "Sistema de unidades preferido",
+      "category": "Tipo de negocio",
+      "submit": "Guardar negocio",
+      "section": {
+        "region": "País y moneda",
+        "operation": "Cómo trabajas"
+      }
+    },
+    "unitSystem": {
+      "metric": "Métrico",
+      "imperial": "Imperial"
+    },
+    "category": {
+      "food": "Alimentos",
+      "handmade": "Artesanías",
+      "services": "Servicios",
+      "resale": "Reventa"
+    }
   },
   "home": {
     "title": "Inicio"
   },
   "ingredients": {
-    "title": "Ingredientes"
+    "title": "Ingredientes",
+    "add": "Añadir ingrediente",
+    "empty": "Añade las materias primas que compras para que Valorarte controle tu stock y tus costos.",
+    "lowStockAt": "Stock bajo en {{quantity}} {{unit}}",
+    "tracksLotsBadge": "Lotes y vencimientos",
+    "new": {
+      "title": "Nuevo ingrediente",
+      "name": "Nombre",
+      "category": "Categoría",
+      "dimension": "Tipo de medida",
+      "unit": "Unidad",
+      "threshold": "Alerta de stock bajo",
+      "tracksLots": "Controlar lotes y vencimientos",
+      "notes": "Notas",
+      "businessMissing": "El negocio de este ingrediente ya no existe. Vuelve atrás e inténtalo de nuevo.",
+      "unitHint": "Se usa para introducir y mostrar cantidades.",
+      "thresholdHint": "Recibirás una alerta cuando el stock llegue a esta cantidad.",
+      "save": "Guardar ingrediente",
+      "discardTitle": "¿Descartar este ingrediente?",
+      "discardMessage": "Se perderá la información que has introducido.",
+      "keepEditing": "Seguir editando",
+      "discard": "Descartar",
+      "tracksLotsHint": "Actívalo si el ingrediente es perecedero o necesita trazabilidad.",
+      "section": {
+        "measure": "Medida",
+        "inventory": "Inventario",
+        "optional": "Detalles opcionales"
+      }
+    },
+    "emptyTitle": "Aún no hay ingredientes",
+    "count_one": "{{count}} ingrediente",
+    "count_other": "{{count}} ingredientes",
+    "loading": "Cargando ingredientes…"
   },
   "products": {
     "title": "Productos"
@@ -21,13 +137,13 @@
     "title": "Ajustes",
     "appearance": {
       "title": "Apariencia",
-      "system": "Seguir el sistema",
+      "system": "Sistema",
       "light": "Claro",
       "dark": "Oscuro"
     },
     "language": {
       "title": "Idioma",
-      "system": "Idioma del sistema",
+      "system": "Sistema",
       "es": "Español",
       "en": "English"
     }

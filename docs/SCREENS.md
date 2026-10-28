@@ -1,377 +1,410 @@
-# Valorarte — Especificación de pantallas y flujos
+# Valorarte — Especificación de pantallas
 
-## 1. Reglas generales de interfaz
+## 1. Propósito
 
-- Mantener cuatro pestañas inferiores: Inicio, Ingredientes, Productos y Ajustes.
-- Utilizar formularios cortos y progresivos.
-- Mostrar los campos específicos solo cuando correspondan al tipo de entidad.
-- Mantener las acciones principales visibles y las secundarias en menús contextuales.
-- Confirmar acciones destructivas.
-- Mostrar errores cerca del campo que los origina.
-- Conservar los datos introducidos si una validación falla.
-- Mostrar estados vacíos útiles con una acción para comenzar.
-- No usar datos ficticios como métricas reales.
-- No permitir que las pantallas modifiquen directamente el inventario sin pasar por las operaciones de dominio.
+Este documento define qué debe resolver cada pantalla y qué información debe priorizar.
 
-## 2. Inicio
+No prescribe una plantilla visual idéntica para toda la aplicación. Las composiciones deben responder a la tarea, los datos disponibles y las acciones reales.
+
+Todas las pantallas deben respetar `CLAUDE.md` y `docs/DESIGN-SYSTEM.md`.
+
+No inventes métricas, datos de ejemplo que puedan confundirse con datos reales ni funcionalidades que no estén implementadas.
+
+## 2. Navegación principal
+
+La aplicación tiene cuatro secciones:
+
+1. **Inicio:** visión general del negocio y prioridades.
+2. **Ingredientes:** materias primas, existencias, compras y movimientos.
+3. **Productos:** productos fabricados, productos para reventa y servicios.
+4. **Ajustes:** preferencias y configuración del negocio.
+
+La navegación inferior mantiene los cuatro iconos visibles y muestra la etiqueta solo para la sección activa.
+
+Los formularios o flujos secundarios pueden usar una cabecera propia, con título claro, acción de cierre o regreso accesible y comportamiento correcto al descartar cambios.
+
+## 3. Inicio
 
 ### Objetivo
 
-Mostrar el estado del negocio y facilitar las acciones frecuentes.
+Permitir que el usuario entienda rápidamente qué necesita atención y cómo está funcionando el negocio.
 
-### Prioridades
+### Prioridades de información
 
-1. Alertas de stock bajo y vencimientos.
-2. Rentabilidad.
-3. Ventas.
+1. Alertas que requieren atención.
+2. Ventas del periodo seleccionado.
+3. Margen bruto y beneficio estimado, diferenciados claramente.
+4. Estado del inventario y productos con baja rentabilidad.
+5. Acciones frecuentes para continuar el trabajo.
 
-### Contenido recomendado
+### Contenido previsto
 
-- Resumen de ventas del periodo seleccionado.
-- Margen bruto del periodo.
-- Ganancia estimada, indicando si hay costos incompletos.
-- Alertas de stock bajo.
-- Alertas de lotes próximos a vencer, si el negocio utiliza lotes con vencimiento.
-- Productos con baja rentabilidad o cambios relevantes de costos.
-- Accesos rápidos para registrar una venta, una compra y una producción.
+- Resumen de ventas del periodo.
+- Margen bruto.
+- Beneficio estimado, con indicación de costos incompletos cuando corresponda.
+- Alertas de existencias bajas.
+- Alertas de vencimiento, cuando se controlen lotes y caducidad.
+- Cambios relevantes en costos.
+- Productos con rentabilidad reducida.
+- Accesos rápidos a venta, compra y producción cuando estén disponibles.
 
-### Comportamiento
+### Criterios de composición
 
-- Permitir cambiar el periodo de consulta.
-- Diferenciar venta registrada de dinero cobrado.
-- Diferenciar margen bruto de ganancia estimada.
-- No mostrar ganancia definitiva si faltan costos necesarios.
-- No generar recomendaciones si no existe información suficiente.
-- Explicar brevemente por qué se genera una alerta o recomendación.
+- No des el mismo peso a todas las métricas.
+- Prioriza alertas accionables y resultados relevantes.
+- Usa cifras destacadas, comparaciones o visualizaciones cuando faciliten comprender los resultados.
+- No conviertas automáticamente cada métrica en una tarjeta independiente.
+- Evita gráficos decorativos sin información útil.
+- Diferencia ventas de dinero cobrado.
+- Diferencia margen bruto de beneficio estimado.
+- No muestres un beneficio definitivo cuando faltan datos necesarios para calcularlo.
+- Explica por qué una cifra es estimada o incompleta.
+- Permite identificar el periodo al que corresponden las cifras.
 
-## 3. Ingredientes
+### Estado sin datos
+
+Explica qué información falta y cómo empezar. No muestres cifras ficticias ni un panel de métricas vacío como si el negocio ya tuviera actividad.
+
+## 4. Ingredientes
+
+### Objetivo
+
+Facilitar la consulta y gestión de materias primas, cantidades disponibles, costos y alertas.
 
 ### Lista
 
-Mostrar:
+Debe permitir reconocer rápidamente:
 
 - Nombre.
-- Tipo o categoría.
-- Cantidad disponible.
-- Unidad de inventario.
-- Costo promedio por unidad base.
-- Indicador de stock bajo.
-- Indicador de vencimiento cuando corresponda.
+- Categoría, cuando exista.
+- Cantidad y unidad de inventario.
+- Indicador de existencias bajas, cuando corresponda.
+- Indicador de seguimiento por lotes, cuando corresponda.
+- Acciones disponibles según el estado de la implementación.
 
-Incluir:
+Debe incluir búsqueda, filtros y ordenación cuando estén implementados en el alcance vigente.
 
-- Búsqueda.
-- Filtros por categoría y estado de stock.
-- Ordenamiento por nombre, costo o cantidad.
-- Acción para registrar una compra.
-- Acción para ajustar inventario con motivo.
-- Acceso al historial de compras y movimientos.
+### Criterios de composición
 
-### Crear y editar ingrediente
+- Prioriza el nombre y la información de inventario.
+- Utiliza iconos para alertas o metadatos solo cuando ayuden a reconocerlos.
+- No conviertas cada ingrediente en una tarjeta con borde y sombra por defecto.
+- Usa una lista legible con separaciones consistentes.
+- Mantén visibles las señales importantes sin saturar todas las filas.
+- El botón flotante de añadir debe ser accesible y no tapar contenido.
+- El contador del título debe representar el número real de elementos.
 
-Campos sugeridos:
+### Estado vacío
 
-- Nombre obligatorio.
-- Categoría opcional.
-- Tipo de medida: masa, volumen, longitud, área, unidad u otra dimensión compatible.
-- Unidad de inventario.
-- Cantidad inicial opcional.
-- Umbral de stock bajo.
-- Si utiliza lotes y vencimientos.
-- Notas opcionales.
+Explica que todavía no hay ingredientes y ofrece una acción para registrar el primero.
 
-El ingreso inicial de existencias debe registrarse como un movimiento de apertura o ajuste, no cambiar silenciosamente el stock.
+### Alta y edición
+
+Campos previstos según las reglas de dominio:
+
+- Nombre.
+- Dimensión física.
+- Unidad de inventario compatible con esa dimensión.
+- Umbral de existencias bajas, opcional.
+- Categoría, opcional.
+- Seguimiento por lotes, según el alcance.
+- Notas, opcionales.
+
+### Criterios de composición del formulario
+
+- Agrupa los campos por propósito.
+- Presenta la dimensión como selección única breve si conviene comparar las alternativas.
+- Presenta la unidad con un selector apropiado.
+- Muestra la unidad junto al umbral de existencias.
+- Explica la unidad base o normalización solo cuando sea necesario para comprender el comportamiento.
+- No presentes un interruptor para una selección de categorías.
+- Mantén la acción principal accesible al desplazarse y con el teclado abierto.
+- Muestra errores junto al campo correspondiente.
+- Conserva los valores introducidos si la validación falla.
+- Confirma el descarte solo si hay cambios sin guardar.
 
 ### Detalle del ingrediente
 
-Mostrar:
+Cuando esté implementado, debe poder mostrar:
 
 - Existencias actuales.
-- Unidad base y unidad de visualización.
+- Unidad de inventario y unidad base.
 - Costo promedio ponderado.
-- Precio de la última compra.
-- Evolución histórica de precios.
-- Compras recientes.
+- Último precio de compra.
+- Historial de compras.
 - Movimientos de inventario.
-- Productos y recetas que utilizan el ingrediente.
+- Historial de costos o su evolución, cuando existan datos.
+- Usos en recetas.
+- Lotes y vencimientos, si aplica.
 
-El gráfico histórico debe comparar precios normalizados a una unidad compatible.
+No muestres una gráfica vacía o inventada si no hay suficientes datos.
 
-### Registrar compra
+### Compra de ingrediente
 
-Campos:
+El flujo debe contemplar los campos definidos por el dominio, según corresponda:
 
-- Fecha.
-- Proveedor opcional.
-- Cantidad comprada.
-- Unidad de compra.
-- Importe de la línea.
+- Fecha y proveedor.
+- Cantidad y unidad.
+- Importe de línea.
 - Descuentos.
-- Transporte y otros gastos directamente atribuibles.
-- Impuestos de compra, cuando corresponda y se necesite distinguirlos.
-- Lote y vencimiento opcionales.
-- Notas opcionales.
+- Transporte y costos directos.
+- Impuestos.
+- Lote y vencimiento.
+- Notas.
 
-Mostrar una vista previa del costo normalizado y del efecto sobre el costo promedio.
+Cuando se disponga de los datos, muestra una vista previa del costo normalizado y del impacto sobre el costo promedio.
 
-La compra confirmada debe actualizar el inventario y el costo mediante una operación de dominio transaccional.
+No cambies las fórmulas de compra o valoración al rediseñar el flujo.
 
-## 4. Productos
+## 5. Productos
+
+### Objetivo
+
+Permitir identificar productos, variantes, precios, costos, rentabilidad y existencias según el tipo de negocio.
 
 ### Lista
 
-Mostrar:
+Prioriza, según el tipo de producto:
 
 - Nombre.
-- Tipo: fabricado, reventa o servicio.
-- Variante o presentación principal cuando corresponda.
+- Tipo y variante, cuando corresponda.
 - Precio de venta.
 - Costo estimado.
-- Margen objetivo o margen estimado.
-- Estado de stock para productos que lo controlan.
-- Alertas relevantes.
+- Margen.
+- Existencias, si aplica.
+- Indicadores relevantes de rentabilidad o inventario.
 
-Incluir búsqueda, filtros y ordenamiento.
+### Criterios de composición
 
-### Crear producto
+- No presentes todos los datos con la misma prominencia.
+- Destaca precio, rentabilidad o existencias según la tarea.
+- Diferencia productos fabricados, productos de reventa y servicios.
+- No muestres existencias para elementos que no manejan inventario.
+- No confundas margen con markup.
+- No presentes costos incompletos como definitivos.
+- Utiliza filtros y búsqueda cuando formen parte del alcance implementado.
 
-Campos comunes:
+### Creación y edición
 
-- Nombre.
-- Descripción opcional.
-- Categoría.
-- Tipo operativo.
-- Variantes, si las utiliza.
-- Precio sugerido y configuración de precios.
-- Impuestos porcentuales configurados para el producto.
-- Umbral de stock bajo cuando corresponda.
+Los campos dependen del tipo de producto y de las reglas de negocio.
 
-Los campos deben cambiar según el tipo.
+#### Productos fabricados
 
-### Producto fabricado
+Considera:
 
-Permitir:
-
-- Definir una receta base.
-- Añadir ingredientes y cantidades.
-- Elegir unidades compatibles.
-- Definir rendimiento esperado de la receta.
-- Configurar variantes con receta escalada o receta independiente.
-- Consultar costo directo estimado.
-- Configurar o consultar costos indirectos asignados.
-- Consultar precio sugerido y rentabilidad estimada.
-
-### Producto de reventa
-
-Permitir:
-
-- Registrar el producto comprado.
-- Consultar costo promedio ponderado de existencias.
-- Controlar stock de mercancía.
-- Definir precio de venta y margen objetivo.
-- Registrar variantes con precios y stock independientes cuando corresponda.
-
-### Servicio
-
-Permitir:
-
-- Definir precio de venta.
-- Registrar costos directos.
-- Registrar consumo opcional de materiales.
-- Configurar costos indirectos compatibles.
-- Calcular rentabilidad estimada.
-
-No exigir inventario de productos terminados a los servicios.
-
-### Variantes
-
-Una variante puede representar tamaño, presentación u otra opción comercial.
-
-Cada variante debe poder tener:
-
-- Identificador propio.
-- Nombre o atributos.
-- Código opcional.
+- Nombre y categoría.
+- Variantes.
+- Receta e ingredientes.
+- Cantidades y unidades compatibles.
+- Costos de producción.
 - Precio sugerido.
-- Precio de venta predeterminado.
-- Impuestos aplicables.
-- Inventario propio cuando corresponda.
-- Receta escalada o receta independiente para productos fabricados.
+- Promociones cuando estén implementadas.
 
-No asumir que toda variante es una multiplicación lineal de la receta base.
+#### Productos para reventa
+
+Considera:
+
+- Datos básicos.
+- Variantes.
+- Precio de venta.
+- Existencias y compras.
+- Costo promedio ponderado de productos terminados, conforme al dominio.
+
+#### Servicios
+
+Considera:
+
+- Datos básicos.
+- Precio.
+- Costos directos.
+- Materiales opcionales, cuando corresponda.
+
+No muestres todos los campos de todos los tipos en un formulario universal. Utiliza secciones condicionales coherentes con la selección del tipo.
 
 ### Detalle del producto
 
-Mostrar:
+Cuando esté disponible, muestra información de precios, costos, margen, variantes, inventario, recetas y movimientos según el tipo.
 
-- Precio sugerido.
-- Precio configurado.
-- Costo estimado.
-- Margen bruto estimado.
-- Ganancia estimada después de indirectos cuando sea calculable.
-- Componentes del costo.
-- Historial de precios.
-- Variantes.
-- Recetas.
-- Producciones y ventas relacionadas.
-- Alertas y recomendaciones de promoción.
+No fuerces una estructura visual idéntica para entidades que tienen comportamientos diferentes.
 
-## 5. Registrar producción
+## 6. Producción
 
-El flujo debe permitir seleccionar:
+### Objetivo
 
-- Producto fabricado.
-- Variante.
-- Receta aplicable.
+Registrar la transformación de ingredientes en productos terminados de forma clara y segura.
+
+### Información prevista
+
+- Producto y variante.
+- Receta.
 - Cantidad planificada.
-- Cantidad realmente obtenida.
-- Cantidad perdida o merma.
+- Producción real.
+- Desperdicio, si aplica.
 - Fecha.
-- Lote opcional.
-- Vencimiento opcional.
+- Lote y vencimiento, cuando corresponda.
 - Notas.
+- Vista previa del consumo de ingredientes, existencias y costo.
 
-Antes de confirmar, mostrar:
+### Criterios de composición
 
-- Ingredientes que se consumirán.
-- Cantidades normalizadas.
-- Stock disponible.
-- Costo calculado de los ingredientes.
-- Costo estimado de la producción.
+- Presenta el producto que se fabricará y la cantidad como información principal.
+- Facilita revisar los ingredientes que se consumirán.
+- Destaca cantidades insuficientes antes de confirmar.
+- No escondas las consecuencias sobre el inventario.
+- Muestra costos estimados y su estado de integridad.
+- Evita repetir el mismo dato en varias tarjetas.
 
-Bloquear la confirmación si no hay ingredientes suficientes.
+### Reglas funcionales
 
-La confirmación debe consumir ingredientes y generar productos terminados como una única operación consistente.
+- Bloquea la producción cuando las reglas de inventario lo exijan por falta de existencias.
+- Consume ingredientes y crea productos terminados de forma transaccional.
+- Conserva la trazabilidad e historial de producción.
+- Respeta las reglas de valoración y costos existentes.
+- No confirmes visualmente una producción antes de recibir el resultado de la operación.
 
-Una producción confirmada conserva sus datos históricos. Para corregirla, utilizar una operación de reverso o ajuste trazable.
+## 7. Ventas
 
-## 6. Registrar venta
+### Objetivo
 
-El flujo predeterminado es venta rápida.
+Permitir registrar una venta con pocos pasos, sin ocultar importes, descuentos, impuestos ni rentabilidad estimada.
 
-Permitir:
+### Flujo previsto
 
-- Buscar y añadir productos o variantes.
-- Cambiar cantidades.
-- Modificar el precio por línea.
-- Aplicar descuentos.
-- Ver impuestos y total final.
-- Seleccionar método de pago.
-- Registrar pagos divididos o parciales.
-- Registrar saldo pendiente.
-- Añadir un cliente opcional si esa capacidad está implementada.
-- Confirmar la venta.
+- Añadir productos y variantes.
+- Introducir cantidades.
+- Mostrar precios por línea.
+- Permitir modificar el precio real de una línea cuando la regla de negocio lo autorice.
+- Aplicar descuentos e impuestos según el dominio.
+- Registrar pagos completos, parciales o divididos.
+- Registrar cliente opcional cuando esté disponible.
+- Mostrar total y rentabilidad estimada.
+- Indicar saldo pendiente cuando corresponda.
 
-Antes de confirmar, mostrar:
+### Criterios de composición
 
-- Subtotal.
-- Descuentos.
-- Impuestos configurados.
-- Total a cobrar.
-- Importe recibido.
-- Saldo pendiente.
-- Costo estimado de los productos vendidos.
-- Margen bruto estimado.
-- Ganancia estimada después de indirectos, si se puede calcular.
+- Mantén visibles los artículos añadidos y el total.
+- Diferencia subtotal, descuento, impuestos, total, pagos y saldo.
+- Evita una sucesión de tarjetas que obligue a recorrer toda la pantalla para entender la venta.
+- Usa controles adecuados para cantidades y selección de productos.
+- Haz que la acción principal sea evidente.
+- Presenta advertencias antes de confirmar operaciones con consecuencias importantes.
+- No ocultes que el precio de una línea fue modificado.
+- No presentes rentabilidad definitiva si faltan datos de costos.
 
-La venta debe recalcular la rentabilidad con el precio real elegido, no con el precio sugerido.
+### Reglas funcionales
 
-Al confirmar:
+Respeta las reglas del dominio para descuentos, impuestos, precios, pagos parciales, devoluciones, cancelaciones e inventario. No dupliques esas fórmulas en la interfaz.
 
-- Descontar productos terminados para productos fabricados.
-- Descontar mercancía para productos de reventa.
-- Aplicar el consumo de materiales de servicios solo si está definido en su configuración.
-- Registrar los cobros y saldos pendientes.
-- Guardar los valores históricos de la operación.
+## 8. Devoluciones y cancelaciones
 
-## 7. Devoluciones y anulaciones
+- Explica claramente qué operación se va a devolver o cancelar.
+- Identifica sus consecuencias sobre el inventario y los importes.
+- Usa confirmación para operaciones destructivas o difíciles de revertir.
+- Diferencia la devolución de una venta de la cancelación de una operación.
+- Conserva el historial y la trazabilidad.
+- No presentes una operación como revertida hasta confirmar el resultado.
 
-Permitir localizar la operación original y registrar la corrección.
+## 9. Ajustes
 
-Una devolución debe distinguir:
+### Objetivo
 
-- Cantidad devuelta.
-- Importe que corresponde reembolsar.
-- Estado del producto devuelto.
-- Si puede reingresar al stock.
-- Ajustes económicos asociados.
+Agrupar las preferencias y la configuración del negocio para que puedan localizarse rápidamente.
 
-No reingresar automáticamente productos dañados o no vendibles.
+### Secciones previstas
 
-Una anulación debe revertir los efectos pertinentes sobre inventario, cobros y saldos pendientes, sin borrar la operación original.
+- Negocio.
+- Apariencia.
+- Idioma.
+- Sistema de unidades.
+- Precios y costos.
+- Impuestos.
+- Inventario.
+- Copias de seguridad.
 
-Evitar duplicar reversos o reembolsos.
+La presencia y funcionalidad de cada sección dependen del alcance implementado. No muestres opciones ficticias que parezcan operativas.
 
-## 8. Ajustes
+### Apariencia e idioma
 
-Agrupar los ajustes en secciones claras:
+- Apariencia: claro, oscuro y sistema, conforme a las opciones existentes.
+- Idioma: idiomas admitidos por la aplicación.
+- Los cambios deben reflejarse de forma coherente en toda la interfaz.
+- Usa controles de selección semánticamente adecuados.
+- No uses interruptores para elegir entre más de dos modos.
 
-### Negocio
+Composición implementada:
+
+- **Apariencia:** selector gráfico horizontal de tres opciones con icono y etiqueta (Sistema `theme-light-dark`, Claro `white-balance-sunny`, Oscuro `weather-night`). Las opciones se comparan a la vista. Sistema sigue el tema del dispositivo; Claro y Oscuro lo fijan.
+- **Idioma:** fila compacta con icono `translate`, nombre, idioma actual y `chevron-right`. Abre una hoja de selección con Sistema, Español y English. Sin banderas.
+- Las dos preferencias se separan con un divisor, no con tarjetas, y no llevan descripciones redundantes.
+
+### Costos e impuestos
+
+Agrupa las preferencias según su propósito y proporciona contexto cuando una opción afecte los cálculos del negocio.
+
+No cambies las reglas de impuestos ni costos para simplificar su presentación.
+
+### Inventario y copias de seguridad
+
+Presenta las acciones relevantes con nombres claros y confirma operaciones que puedan modificar o eliminar información. Nunca simules una copia de seguridad o una restauración exitosa.
+
+## 10. Configuración inicial del negocio
+
+### Objetivo
+
+Recoger la información mínima necesaria para empezar a utilizar la aplicación.
+
+### Campos previstos
 
 - Nombre del negocio.
 - País.
 - Moneda.
-- Categoría.
-- Preferencias regionales.
+- Sistema de unidades preferido.
+- Categoría del negocio.
 
-### Apariencia
+Respeta las validaciones y opciones definidas por el dominio.
 
-- Tema claro.
-- Tema oscuro.
-- Seguir sistema.
+### Criterios de composición
 
-### Idioma
+- Explica brevemente por qué se solicita la información.
+- Ordena los campos según su importancia y dependencia.
+- Agrupa país y moneda solo si la distribución sigue siendo legible en pantallas estrechas.
+- Utiliza selección única para categoría y sistema de unidades.
+- Evita que todos los controles tengan el mismo énfasis visual.
+- Mantén visible la acción para continuar.
+- Muestra los errores junto al campo afectado.
 
-- Español.
-- Inglés.
+## 11. Estados comunes
 
-### Unidades
+Cada pantalla debe definir los estados pertinentes:
 
-- Sistema métrico o imperial preferido.
-- Preferencias de visualización.
-- Unidades permitidas según la dimensión del ingrediente o producto.
-
-### Precios y costos
-
-- Margen objetivo predeterminado.
-- Método de distribución de indirectos.
-- Parámetros de distribución.
-- Preferencias de redondeo y presentación.
-
-### Impuestos
-
-- Crear, editar y desactivar impuestos porcentuales.
-- Asignar impuestos a productos.
-- Definir si el precio final incluye los impuestos.
-- Ver una vista previa del cálculo.
-
-Los cambios en la configuración no deben reescribir operaciones históricas confirmadas.
-
-### Inventario
-
-- Umbrales predeterminados de stock bajo.
-- Preferencias de lotes y vencimientos.
-- Reglas de alerta.
-
-### Datos y respaldo
-
-- Exportar respaldo.
-- Importar respaldo.
-- Validar versión y contenido.
-- Mostrar confirmación y advertencias antes de sobrescribir datos.
-
-## 9. Estados vacíos y errores
-
-Cada pantalla debe contemplar:
-
-- Sin datos.
-- Carga en curso.
+- Carga inicial.
 - Error recuperable.
-- Formulario inválido.
-- Operación confirmada.
-- Stock insuficiente.
-- Datos de costos incompletos.
-- Conversión de unidades no disponible.
-- Respaldo incompatible o inválido.
+- Lista vacía.
+- Datos disponibles.
+- Guardado en curso.
+- Error de validación.
+- Error de persistencia.
+- Datos incompletos.
+- Acción completada.
 
-Los mensajes deben explicar el problema y ofrecer una acción útil cuando sea posible.
+Los estados vacíos deben facilitar el siguiente paso. Los errores deben indicar qué ocurrió y cómo recuperarse cuando sea posible.
+
+No reutilices el mismo mensaje genérico si la causa requiere una explicación distinta.
+
+## 12. Criterios de aceptación visual
+
+Una pantalla se acepta cuando:
+
+- Resuelve claramente su tarea.
+- Tiene jerarquía visual propia y coherente con Valorarte.
+- Prioriza la información importante.
+- Usa los controles correctos para cada interacción.
+- No depende de tarjetas y texto repetitivos como única composición.
+- No añade iconos o animaciones sin una función.
+- Conserva las reglas de negocio.
+- Funciona con tema claro y oscuro.
+- Respeta traducciones, accesibilidad y textos largos.
+- Contempla los estados relevantes.
+- Ha sido verificada con las herramientas disponibles y sus limitaciones están documentadas.
+
+La compilación y las pruebas automatizadas no sustituyen una inspección visual real.

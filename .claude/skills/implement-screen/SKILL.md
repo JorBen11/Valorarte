@@ -19,6 +19,8 @@ Lee:
 - `docs/ARCHITECTURE.md`
 - Las reglas de `docs/BUSINESS-RULES.md` relacionadas con la pantalla.
 
+Para la composición visual, la elección de controles y la validación visual, sigue el procedimiento de la sección 4 de la skill `design-system`. Esta skill cubre el flujo funcional y no lo sustituye.
+
 ## Paso 1: inspeccionar
 
 Antes de escribir código:

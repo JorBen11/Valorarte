@@ -2,9 +2,9 @@
  * Tokens del sistema de diseño (docs/DESIGN-SYSTEM.md).
  * Todos los colores de la interfaz deben salir de aquí.
  *
- * Contraste medido (WCAG): todos los colores de texto superan 4.5:1 sobre
- * fondo y superficies, salvo `accent` en tema claro (3.5:1), que solo debe
- * usarse en iconos o texto grande.
+ * Contraste medido (WCAG 2.x): textos ≥ 5.2:1 sobre fondo y superficies en ambos temas.
+ * `accentPremium` (oro) da 2.97:1 sobre el fondo claro: solo decorativo, nunca texto.
+ * `border` (≈1.2–1.6:1) es para divisores; los controles usan `fieldBorder` (≥ 3.3:1).
  */
 
 export type ColorScheme = 'light' | 'dark';
@@ -12,49 +12,59 @@ export type ColorScheme = 'light' | 'dark';
 export interface ThemeColors {
   background: string;
   surface: string;
-  surfaceSecondary: string;
+  surfaceRaised: string;
   textPrimary: string;
   textSecondary: string;
+  border: string;
+  fieldBorder: string;
   primary: string;
   onPrimary: string;
-  accent: string;
-  border: string;
+  brandSubtle: string;
+  accentPremium: string;
   success: string;
   warning: string;
   error: string;
   info: string;
+  /** Velo detrás de hojas y diálogos. */
+  scrim: string;
 }
 
 export const colors: Record<ColorScheme, ThemeColors> = {
   light: {
-    background: '#F7F5F0',
+    background: '#FAF7F4',
     surface: '#FFFFFF',
-    surfaceSecondary: '#EFEEE8',
-    textPrimary: '#242923',
-    textSecondary: '#5D665E',
-    primary: '#205C46',
+    surfaceRaised: '#F1EBF2',
+    textPrimary: '#252128',
+    textSecondary: '#655F68',
+    border: '#E5DDE6',
+    fieldBorder: '#867D8A',
+    primary: '#603B68',
     onPrimary: '#FFFFFF',
-    accent: '#C56A4A',
-    border: '#DCE1D9',
-    success: '#237A50',
-    warning: '#9A5B13',
-    error: '#B42318',
-    info: '#245FA6',
+    brandSubtle: '#EDE3F0',
+    accentPremium: '#B18A50',
+    success: '#28745A',
+    warning: '#8B5D12',
+    error: '#B42335',
+    info: '#286A77',
+    scrim: 'rgba(37, 33, 40, 0.45)',
   },
   dark: {
-    background: '#171C19',
-    surface: '#222A25',
-    surfaceSecondary: '#2C352E',
-    textPrimary: '#F1F3EF',
-    textSecondary: '#B6C0B8',
-    primary: '#8CC8A7',
-    onPrimary: '#17251D',
-    accent: '#E49A7B',
-    border: '#3A443D',
-    success: '#86D4A3',
-    warning: '#F2C078',
-    error: '#FF8A80',
-    info: '#91BBF5',
+    background: '#17141A',
+    surface: '#211D24',
+    surfaceRaised: '#2C2530',
+    textPrimary: '#F5F0F6',
+    textSecondary: '#C5BBC8',
+    border: '#403743',
+    fieldBorder: '#837887',
+    primary: '#D0A9D8',
+    onPrimary: '#251B28',
+    brandSubtle: '#3A2D3E',
+    accentPremium: '#B18A50',
+    success: '#6EC6A1',
+    warning: '#E8B65D',
+    error: '#FF7D89',
+    info: '#7BCAD4',
+    scrim: 'rgba(0, 0, 0, 0.6)',
   },
 };
 
@@ -69,8 +79,9 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  control: 10,
-  card: 14,
+  control: 12,
+  sheet: 20,
+  pill: 999,
 } as const;
 
 /** Área táctil mínima recomendada. */
@@ -84,9 +95,14 @@ export const fontFamily = {
 } as const;
 
 export const typography = {
-  screenTitle: { fontFamily: fontFamily.bold, fontSize: 28, lineHeight: 34 },
-  sectionTitle: { fontFamily: fontFamily.semiBold, fontSize: 20, lineHeight: 26 },
-  cardTitle: { fontFamily: fontFamily.semiBold, fontSize: 16, lineHeight: 22 },
+  screenTitle: { fontFamily: fontFamily.bold, fontSize: 30, lineHeight: 36, letterSpacing: -0.6 },
+  sectionTitle: { fontFamily: fontFamily.semiBold, fontSize: 19, lineHeight: 26, letterSpacing: -0.2 },
+  itemTitle: { fontFamily: fontFamily.semiBold, fontSize: 16, lineHeight: 22 },
   body: { fontFamily: fontFamily.regular, fontSize: 15, lineHeight: 22 },
-  label: { fontFamily: fontFamily.medium, fontSize: 13, lineHeight: 18 },
+  label: { fontFamily: fontFamily.medium, fontSize: 14, lineHeight: 20 },
+  caption: { fontFamily: fontFamily.regular, fontSize: 13, lineHeight: 18 },
+  button: { fontFamily: fontFamily.semiBold, fontSize: 15, lineHeight: 20 },
 } as const;
+
+/** Cifras alineadas para cantidades e importes. */
+export const tabularNumbers = { fontVariant: ['tabular-nums' as const] };

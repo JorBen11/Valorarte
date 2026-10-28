@@ -1,20 +1,18 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router';
-import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { FloatingTabBar, type TabIcons } from '@/components/ui/tab-bar';
 import { useTheme } from '@/theme/theme-provider';
-import { fontFamily } from '@/theme/tokens';
 
-type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
-
-// Exactamente cuatro secciones principales (CLAUDE.md §5).
-const TABS: { name: string; titleKey: string; icon: IconName }[] = [
-  { name: 'index', titleKey: 'tabs.home', icon: 'home-outline' },
-  { name: 'ingredients', titleKey: 'tabs.ingredients', icon: 'basket-outline' },
-  { name: 'products', titleKey: 'tabs.products', icon: 'package-variant-closed' },
-  { name: 'settings', titleKey: 'tabs.settings', icon: 'cog-outline' },
+// Exactamente cuatro secciones principales (CLAUDE.md §5). Icono relleno = pestaña activa.
+const TABS: ({ name: string; titleKey: string } & TabIcons)[] = [
+  { name: 'index', titleKey: 'tabs.home', icon: 'home-outline', activeIcon: 'home' },
+  { name: 'ingredients', titleKey: 'tabs.ingredients', icon: 'basket-outline', activeIcon: 'basket' },
+  { name: 'products', titleKey: 'tabs.products', icon: 'cube-outline', activeIcon: 'cube' },
+  { name: 'settings', titleKey: 'tabs.settings', icon: 'cog-outline', activeIcon: 'cog' },
 ];
+
+const ICONS = Object.fromEntries(TABS.map(({ name, icon, activeIcon }) => [name, { icon, activeIcon }]));
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -22,22 +20,10 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        tabBarLabelStyle: { fontFamily: fontFamily.medium },
-      }}>
-      {TABS.map(({ name, titleKey, icon }) => (
-        <Tabs.Screen
-          key={name}
-          name={name}
-          options={{
-            title: t(titleKey),
-            tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name={icon} size={size} color={color} />,
-          }}
-        />
+      tabBar={(props) => <FloatingTabBar {...props} icons={ICONS} />}
+      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }}>
+      {TABS.map(({ name, titleKey }) => (
+        <Tabs.Screen key={name} name={name} options={{ title: t(titleKey) }} />
       ))}
     </Tabs>
   );

@@ -11,7 +11,16 @@ El modelo es conceptual. Los nombres exactos de tablas y columnas pueden adaptar
 - Todas las entidades persistentes deben tener identificadores estables.
 - Las entidades pertenecientes a un negocio deben relacionarse con `businessId`.
 - Usar fechas con una representación consistente y documentada.
-- Usar importes con precisión decimal adecuada.
+- Almacenar los importes monetarios como enteros en la unidad mínima de la moneda configurada (`BUSINESS-RULES.md` §19). Todo campo de importe (`subtotal`, `discountTotal`, `taxTotal`, `grandTotal`, `amount`, `refundAmount`, etc.) sigue esta representación.
+- Excepción: `InventoryMovement.totalValueDelta` es un valor interno de valoración, no un importe definitivo, y usa la escala de §16.
+- Todo importe debe poder interpretarse junto a su moneda: el `currencyCode` de la operación o, cuando la entidad no lo tenga, el del negocio.
+- Almacenar con escala decimal fija de 6 posiciones (`BUSINESS-RULES.md` §19.1), independiente de la precisión monetaria:
+  - Cantidades físicas: `quantity`, `normalizedQuantity`, `quantityDelta`, `normalizedQuantityDelta`, `expectedYield`, `plannedQuantity`, `actualQuantity`, `wasteQuantity`, `restockQuantity` y umbrales de stock.
+  - Costos unitarios normalizados: `unitCostNormalized`, `unitCostSnapshot`, `directUnitCostSnapshot`.
+  - Tasas y márgenes: `rate`, `defaultTargetMargin`, `targetMargin`, `estimatedMargin`.
+- Los campos `normalizedQuantity` y `normalizedQuantityDelta` se expresan siempre en la unidad base de su dimensión (`BUSINESS-RULES.md` §3).
+- Los factores de conversión (`baseConversionFactor`) no siguen la escala de 6 decimales (§5 de este documento).
+- La unidad (principal o mínima) en que se expresan los costos unitarios, el formato de las tasas y la representación física de los decimales de escala 6 están pendientes de definir (`BUSINESS-RULES.md` §19.4).
 - No depender del formato visual de cantidades o monedas para almacenarlas.
 - No borrar operaciones históricas confirmadas.
 - Usar estados explícitos cuando una operación pueda estar pendiente, confirmada, anulada o revertida.
@@ -82,9 +91,12 @@ Ejemplos de dimensiones:
 - `area`
 - `count`
 
-Las conversiones deben realizarse dentro de una dimensión compatible, usando factores conocidos y validados.
+Las unidades base, las reglas de conversión y el alcance del catálogo se definen en `BUSINESS-RULES.md` §3. Consecuencias para esta entidad:
 
-No asumir que todas las unidades personalizadas pueden convertirse automáticamente.
+- `baseConversionFactor` es el factor que convierte una cantidad de esta unidad a la unidad base de su `dimension`. Vale 1 para la propia unidad base.
+- `baseConversionFactor` no sigue la escala de 6 decimales: debe conservar la precisión del factor definido.
+- En el MVP solo existen unidades integradas (`isBuiltIn = true`). Las unidades personalizadas y las presentaciones comerciales quedan fuera del MVP.
+- La representación persistida exacta de `baseConversionFactor` está pendiente de definir.
 
 ## 6. Ingredient
 
@@ -338,7 +350,7 @@ Campos:
 - `unitCode`
 - `normalizedQuantityDelta`
 - `unitCostSnapshot` cuando corresponda
-- `totalValueDelta` cuando corresponda
+- `totalValueDelta` cuando corresponda (ver "Valor acumulado")
 - `sourceEntityType`
 - `sourceEntityId`
 - `reason`
@@ -361,6 +373,37 @@ Tipos de movimiento posibles:
 No todos los tipos se aplican a todos los productos.
 
 Los movimientos confirmados no se borran silenciosamente.
+
+`normalizedQuantityDelta` está expresado en la unidad base de la dimensión del artículo (`BUSINESS-RULES.md` §3). `quantityDelta` y `unitCode` conservan la cantidad y la unidad originales.
+
+### Valor del movimiento y valor acumulado
+
+Decisión aprobada (2026-10-25). Se aplica `BUSINESS-RULES.md` §5.
+
+**Representación de `totalValueDelta`**
+
+- Es un entero con escala fija de 10^6 unidades internas por unidad monetaria mínima de la moneda del negocio. Por ejemplo, en USD, 1 centavo = 1 000 000 unidades internas.
+- Es una representación interna de valoración, distinta del importe monetario definitivo. Los importes definitivos (por ejemplo, `Production.totalCost` o `SaleLine.directCostTotalSnapshot`) siguen siendo enteros en la unidad mínima de la moneda (§2).
+
+**Obligatoriedad y signo**
+
+- Todo movimiento que afecta al valor del inventario debe tener un `totalValueDelta` obligatorio.
+- Las entradas de valor son positivas y las salidas son negativas.
+- Los movimientos que no afectan al valor deben identificarse explícitamente y no llevan `totalValueDelta`.
+
+**Cambio de modelado necesario**
+
+El modelo actual no permite distinguir esos movimientos: `movementType` no determina por sí solo si un movimiento afecta al valor. Se requiere un indicador explícito en `InventoryMovement`, por ejemplo `affectsValuation`. Debe ser obligatorio y coherente con la presencia de `totalValueDelta`. Se incorporará al crear el esquema de la Fase 1.
+
+**Valor acumulado y costo promedio**
+
+- La cantidad acumulada de un artículo es Σ `normalizedQuantityDelta` de sus movimientos.
+- El valor acumulado de un artículo es Σ `totalValueDelta` de sus movimientos que afectan a la valoración.
+- El costo promedio ponderado es valor acumulado / cantidad acumulada, calculado con aritmética decimal precisa.
+- `unitCostSnapshot` y cualquier costo unitario redondeado son snapshots y no son fuente de verdad.
+- Una proyección persistida del valor o de la cantidad solo es válida si se puede reconciliar con los movimientos (`ARCHITECTURE.md` §8).
+
+La valoración de los casos pendientes de `BUSINESS-RULES.md` §5 no queda definida por esta representación.
 
 ## 17. InventoryLot
 

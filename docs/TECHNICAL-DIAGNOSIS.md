@@ -64,8 +64,13 @@ secundaria en ambos temas, excepto:
 
 ## 6. Pendientes y riesgos
 
-1. **Política de redondeo monetario** (propuesta: enteros en unidades menores de la
-   moneda). Bloquea la Fase 1.
+1. ~~**Política de redondeo monetario**~~. Resuelta el 2026-10-25: enteros en la unidad
+   mínima, aritmética decimal y `ROUND_HALF_UP` en importes definitivos
+   (`BUSINESS-RULES.md` §19). Escala de 6 decimales para costos unitarios, cantidades y
+   tasas aprobada el mismo día. Quedan abiertos los detalles y riesgos de §19.4.
+   Unidades base, factores de conversión y fuentes de verdad de la valoración aprobados
+   también el 2026-10-25 (`BUSINESS-RULES.md` §3 y §5). El modelado del valor acumulado
+   queda como propuesta pendiente (`DATA-MODEL.md` §16).
 2. **Varios impuestos y precio con impuestos incluidos**: cascada o misma base
    (BUSINESS-RULES §9). Bloquea el cálculo de precios de la Fase 3.
 3. **Tratamiento económico de la merma** (BUSINESS-RULES §6). Bloquea la Fase 4.
@@ -78,3 +83,10 @@ secundaria en ambos temas, excepto:
    development build (`expo run:android`), donde la app controla su ventana.
 7. **TypeScript 6** ya no incluye `@types/*` automáticamente; `tsconfig.json` declara
    `"types": ["jest"]`. Si se añaden otros tipos globales, hay que listarlos.
+8. **Persistencia (Fase 1, ingredientes):** decisiones técnicas tomadas sin regla de negocio
+   que las fije. Las fechas se guardan en ISO 8601 UTC (texto). Las cantidades de escala 6 se
+   guardan como texto decimal canónico (`"1500.000000"`). `lowStockThreshold` se guarda
+   normalizado a la unidad base. `Business` no incluye todavía `defaultLanguage`; depende
+   del punto 4.
+9. **Pruebas de persistencia:** se ejecutan en Node con `node:sqlite` mediante un adaptador
+   con la misma forma que expo-sqlite. No validan expo-sqlite en Android.
