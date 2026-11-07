@@ -1,5 +1,13 @@
 # Valorarte — Definición del producto
 
+## Resumen
+
+**Posicionamiento.** Valorarte lleva del costo real al precio: une recetas, compras y gastos indirectos para que el negocio sepa cuánto le cuesta cada producto y cuánto debería cobrar por él. Inventario, producción y ventas sirven a esa respuesta.
+
+**Contexto de uso.** La persona usa el móvil entre tareas, en el taller, la cocina o el punto de venta, con poco tiempo. Las operaciones básicas deben funcionar sin conexión.
+
+**Evidencia disponible.** La documentación del producto no contiene testimonios, clientes, datos de usuarios piloto ni métricas reales. No deben inventarse.
+
 ## 1. Visión
 
 Valorarte es una aplicación móvil para pequeños negocios que necesitan entender cuánto les cuesta operar, cuánto deberían cobrar por sus productos y qué rentabilidad obtienen realmente.
@@ -19,6 +27,8 @@ La aplicación debe ayudar a tomar mejores decisiones sin exigir conocimientos c
 ## 2. Usuarios objetivo
 
 Pequeños negocios que fabrican, revenden o venden servicios.
+
+Usuario principal: la persona dueña del negocio que produce y vende por sí misma.
 
 Ejemplos:
 
