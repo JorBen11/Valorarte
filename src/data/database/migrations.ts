@@ -47,6 +47,47 @@ export const MIGRATIONS: readonly { version: number; sql: string }[] = [
       CREATE INDEX ingredients_business_id ON ingredients (business_id);
     `,
   },
+  {
+    // docs/DATA-MODEL.md §16. Solo ingredientes por ahora: item_id referencia ingredients hasta que existan productos.
+    version: 2,
+    sql: `
+      CREATE TABLE inventory_movements (
+        id TEXT PRIMARY KEY NOT NULL CHECK (length(id) = 36),
+        business_id TEXT NOT NULL REFERENCES businesses (id) ON DELETE RESTRICT,
+        item_type TEXT NOT NULL CHECK (item_type IN ('ingredient')),
+        item_id TEXT NOT NULL REFERENCES ingredients (id) ON DELETE RESTRICT,
+        movement_type TEXT NOT NULL CHECK (movement_type IN (
+          'opening_balance', 'purchase_receipt', 'production_consumption', 'production_output', 'sale',
+          'customer_return', 'inventory_adjustment', 'reversal', 'write_off'
+        )),
+        quantity_delta TEXT NOT NULL CHECK (quantity_delta GLOB '*[0-9].[0-9][0-9][0-9][0-9][0-9][0-9]'),
+        unit_code TEXT NOT NULL,
+        normalized_quantity_delta TEXT NOT NULL CHECK (
+          normalized_quantity_delta GLOB '*[0-9].[0-9][0-9][0-9][0-9][0-9][0-9]'
+        ),
+        affects_valuation INTEGER NOT NULL CHECK (affects_valuation IN (0, 1)),
+        unit_cost_snapshot TEXT,
+        total_value_delta INTEGER,
+        source_entity_type TEXT,
+        source_entity_id TEXT,
+        reason TEXT,
+        occurred_at TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        reversal_of_movement_id TEXT REFERENCES inventory_movements (id) ON DELETE RESTRICT,
+        CHECK ((affects_valuation = 1) = (total_value_delta IS NOT NULL)),
+        CHECK (movement_type <> 'inventory_adjustment' OR length(trim(reason)) > 0)
+      ) STRICT;
+
+      CREATE INDEX inventory_movements_item ON inventory_movements (item_id, occurred_at);
+      CREATE INDEX inventory_movements_business ON inventory_movements (business_id);
+
+      -- Los movimientos confirmados son historial: se corrigen con nuevos movimientos, nunca editándolos.
+      CREATE TRIGGER inventory_movements_no_update BEFORE UPDATE ON inventory_movements
+      BEGIN SELECT RAISE(ABORT, 'inventory movements are immutable'); END;
+      CREATE TRIGGER inventory_movements_no_delete BEFORE DELETE ON inventory_movements
+      BEGIN SELECT RAISE(ABORT, 'inventory movements are immutable'); END;
+    `,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1].version;

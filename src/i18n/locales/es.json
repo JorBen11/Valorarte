@@ -24,7 +24,9 @@
     "unknownUnit": "Elige una unidad de la lista.",
     "dimensionMismatch": "La unidad no corresponde al tipo de medida.",
     "negative": "El valor no puede ser negativo.",
-    "invalidNumber": "Introduce un número, por ejemplo 1,5."
+    "invalidNumber": "Introduce un número, por ejemplo 1,5.",
+    "notPositive": "Introduce una cantidad mayor que cero.",
+    "insufficientStock": "No hay existencias suficientes para esta salida."
   },
   "units": {
     "dimension": {
@@ -99,7 +101,6 @@
     "title": "Ingredientes",
     "add": "Añadir ingrediente",
     "empty": "Añade las materias primas que compras para que Valorarte controle tu stock y tus costos.",
-    "lowStockAt": "Stock bajo en {{quantity}} {{unit}}",
     "tracksLotsBadge": "Lotes y vencimientos",
     "new": {
       "title": "Nuevo ingrediente",
@@ -128,7 +129,109 @@
     "emptyTitle": "Aún no hay ingredientes",
     "count_one": "{{count}} ingrediente",
     "count_other": "{{count}} ingredientes",
-    "loading": "Cargando ingredientes…"
+    "loading": "Cargando ingredientes…",
+    "countFiltered": "{{shown}} de {{total}}",
+    "countFilteredA11y": "{{shown}} de {{total}} ingredientes",
+    "openDetail": "Abre el detalle del ingrediente",
+    "noResultsTitle": "Sin resultados",
+    "noResults": "Ningún ingrediente coincide con la búsqueda o los filtros.",
+    "clearAll": "Quitar búsqueda y filtros",
+    "search": {
+      "placeholder": "Buscar por nombre o categoría",
+      "clear": "Limpiar búsqueda"
+    },
+    "filters": {
+      "title": "Filtrar ingredientes",
+      "open_zero": "Filtros",
+      "open_one": "Filtros, {{count}} activo",
+      "open_other": "Filtros, {{count}} activos",
+      "stock": "Existencias",
+      "category": "Categoría",
+      "allCategories": "Todas",
+      "clear": "Quitar filtros",
+      "clearShort": "Quitar",
+      "show_one": "Ver {{count}} resultado",
+      "show_other": "Ver {{count}} resultados"
+    },
+    "stockFilter": {
+      "all": "Todos",
+      "low": "Stock bajo",
+      "out": "Sin existencias",
+      "unknown": "Sin registrar"
+    },
+    "sort": {
+      "title": "Ordenar por",
+      "open": "Ordenar: {{sort}}",
+      "name": "Nombre (A–Z)",
+      "quantity": "Cantidad disponible (menor primero)",
+      "restock": "Prioridad de reposición",
+      "recent": "Actividad reciente"
+    },
+    "stock": {
+      "quantity": "{{quantity}} {{unit}}",
+      "available": "{{quantity}} disponibles",
+      "notRecorded": "Sin registrar",
+      "lowAt": "Stock bajo · alerta en {{threshold}}",
+      "status": {
+        "ok": "Suficiente",
+        "low": "Stock bajo",
+        "out": "Sin existencias",
+        "unknown": "Stock sin registrar"
+      }
+    },
+    "detail": {
+      "loading": "Cargando ingrediente…",
+      "edit": "Editar ingrediente",
+      "notFoundTitle": "Este ingrediente ya no existe",
+      "notFound": "No se encontró el ingrediente. Vuelve al listado para ver los datos actuales.",
+      "backToList": "Volver a ingredientes",
+      "available": "Disponible",
+      "unknownStockHint": "Registra una entrada para empezar a controlar las existencias.",
+      "threshold": "Alerta de stock bajo",
+      "noThreshold": "Sin alerta",
+      "averageCost": "Costo promedio",
+      "costUnavailable": "No calculable",
+      "costUnavailableHint": "Se calculará cuando registres compras.",
+      "measureValue": "{{dimension}} · {{unit}}",
+      "baseUnit": "Se registra internamente en {{unit}}.",
+      "on": "Activado",
+      "off": "Desactivado",
+      "created": "Creado: {{date}}",
+      "noMovements": "Aún no hay movimientos. Los ajustes, y más adelante las compras y la producción, aparecerán aquí.",
+      "section": {
+        "info": "Información",
+        "movements": "Movimientos"
+      },
+      "field": {
+        "measure": "Medida",
+        "updated": "Última modificación"
+      }
+    },
+    "movement": {
+      "in": "Entrada",
+      "out": "Salida",
+      "inventory_adjustment_in": "Ajuste de entrada",
+      "inventory_adjustment_out": "Ajuste de salida"
+    },
+    "adjust": {
+      "title": "Ajustar existencias",
+      "direction": "Tipo de ajuste",
+      "quantity": "Cantidad",
+      "current": "Ahora",
+      "after": "Después",
+      "insufficient": "Insuficiente",
+      "reason": "Motivo",
+      "reasonHint": "Por ejemplo: conteo físico, producto dañado o existencias iniciales.",
+      "valuationNote": "Un ajuste cambia la cantidad disponible, no el costo. El costo promedio se calculará con las compras.",
+      "save": "Registrar ajuste",
+      "discardTitle": "¿Descartar este ajuste?"
+    },
+    "edit": {
+      "title": "Editar ingrediente",
+      "save": "Guardar cambios",
+      "discardTitle": "¿Descartar los cambios?",
+      "dimensionLocked": "No se puede cambiar porque las existencias se registran en esta medida."
+    }
   },
   "products": {
     "title": "Productos"

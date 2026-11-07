@@ -32,8 +32,11 @@ function RootStack() {
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-        {/* El alta se presenta como hoja modal que entra desde abajo. */}
+        {/* El alta, la edición y los ajustes se presentan como hoja modal que entra desde abajo. */}
         <Stack.Screen name="ingredients/new" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="ingredients/adjust" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+        {/* El detalle es una pantalla de la pila: entra lateralmente y conserva el listado debajo. */}
+        <Stack.Screen name="ingredients/[id]" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </>
   );

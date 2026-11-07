@@ -41,6 +41,18 @@ export function parseDecimal(input: string): Rational {
   return rational(num, 10n ** BigInt(frac.length));
 }
 
+export const ZERO: Rational = rational(0n);
+
+export function add(a: Rational, b: Rational): Rational {
+  return rational(a.num * b.den + b.num * a.den, a.den * b.den);
+}
+
+/** -1, 0 o 1 según `a` sea menor, igual o mayor que `b`. */
+export function compare(a: Rational, b: Rational): number {
+  const diff = a.num * b.den - b.num * a.den;
+  return diff < 0n ? -1 : diff > 0n ? 1 : 0;
+}
+
 export function multiply(a: Rational, b: Rational): Rational {
   return rational(a.num * b.num, a.den * b.den);
 }

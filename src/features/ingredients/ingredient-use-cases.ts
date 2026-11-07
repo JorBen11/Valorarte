@@ -1,19 +1,77 @@
 import type { SqlDatabase } from '@/data/database/database';
 import { SqliteBusinessRepository } from '@/data/repositories/business-repository';
 import { SqliteIngredientRepository } from '@/data/repositories/ingredient-repository';
+import { SqliteInventoryMovementRepository } from '@/data/repositories/inventory-movement-repository';
 import { createBusiness, type Business, type NewBusinessInput } from '@/domain/business';
-import { createIngredient, type Ingredient, type NewIngredientInput } from '@/domain/ingredient';
+import {
+  createIngredient,
+  updateIngredient,
+  type Ingredient,
+  type IngredientChanges,
+  type NewIngredientInput,
+} from '@/domain/ingredient';
+import {
+  createInventoryAdjustment,
+  stockStatus,
+  sumStock,
+  type InventoryAdjustmentInput,
+  type InventoryMovement,
+  type StockStatus,
+} from '@/domain/inventory-movement';
+import type { Rational } from '@/domain/rational';
 import { newId } from '@/lib/id';
+
+export interface IngredientWithStock {
+  ingredient: Ingredient;
+  /** `null` si nunca hubo movimientos: existencias desconocidas, no cero. */
+  stock: Rational | null;
+  status: StockStatus;
+  /** Lo más reciente entre la edición del ingrediente y su último movimiento. */
+  lastActivityAt: string;
+}
 
 export interface IngredientsOverview {
   business: Business | null;
-  ingredients: Ingredient[];
+  ingredients: IngredientWithStock[];
 }
 
 export async function loadIngredientsOverview(db: SqlDatabase): Promise<IngredientsOverview> {
   const business = await new SqliteBusinessRepository(db).findFirst();
-  const ingredients = business ? await new SqliteIngredientRepository(db).listByBusiness(business.id) : [];
-  return { business, ingredients };
+  if (!business) return { business, ingredients: [] };
+  const [ingredients, activity] = await Promise.all([
+    new SqliteIngredientRepository(db).listByBusiness(business.id),
+    new SqliteInventoryMovementRepository(db).activityByBusiness(business.id),
+  ]);
+  return {
+    business,
+    ingredients: ingredients.map((ingredient) => {
+      const entry = activity.get(ingredient.id);
+      const stock = sumStock(entry?.deltas ?? []);
+      const lastMovement = entry?.lastOccurredAt ?? '';
+      return {
+        ingredient,
+        stock,
+        status: stockStatus(stock, ingredient.lowStockThreshold),
+        lastActivityAt: lastMovement > ingredient.updatedAt ? lastMovement : ingredient.updatedAt,
+      };
+    }),
+  };
+}
+
+export interface IngredientDetail {
+  ingredient: Ingredient;
+  stock: Rational | null;
+  status: StockStatus;
+  /** Más reciente primero. */
+  movements: InventoryMovement[];
+}
+
+export async function loadIngredientDetail(db: SqlDatabase, id: string): Promise<IngredientDetail | null> {
+  const ingredient = await new SqliteIngredientRepository(db).findById(id);
+  if (!ingredient) return null;
+  const movements = await new SqliteInventoryMovementRepository(db).listByItem(id);
+  const stock = sumStock(movements.map((m) => m.normalizedQuantityDelta));
+  return { ingredient, stock, status: stockStatus(stock, ingredient.lowStockThreshold), movements };
 }
 
 /**
@@ -34,4 +92,39 @@ export async function registerIngredient(
   const ingredient = createIngredient(input, id, new Date());
   await new SqliteIngredientRepository(db).create(ingredient);
   return ingredient;
+}
+
+export class IngredientNotFoundError extends Error {
+  constructor(readonly id: string) {
+    super(`Ingredient ${id} not found`);
+    this.name = 'IngredientNotFoundError';
+  }
+}
+
+export async function editIngredient(db: SqlDatabase, id: string, changes: IngredientChanges): Promise<Ingredient> {
+  const repository = new SqliteIngredientRepository(db);
+  const existing = await repository.findById(id);
+  if (!existing) throw new IngredientNotFoundError(id);
+  const updated = updateIngredient(existing, changes, new Date());
+  await repository.update(updated);
+  return updated;
+}
+
+/** Lee el stock y escribe el movimiento en la misma transacción para no aceptar un ajuste sobre un saldo obsoleto. */
+export async function recordInventoryAdjustment(
+  db: SqlDatabase,
+  ingredientId: string,
+  input: InventoryAdjustmentInput,
+  id: string = newId(),
+): Promise<InventoryMovement> {
+  let movement: InventoryMovement | undefined;
+  await db.withTransactionAsync(async () => {
+    const ingredient = await new SqliteIngredientRepository(db).findById(ingredientId);
+    if (!ingredient) throw new IngredientNotFoundError(ingredientId);
+    const movements = new SqliteInventoryMovementRepository(db);
+    const current = sumStock((await movements.listByItem(ingredientId)).map((m) => m.normalizedQuantityDelta));
+    movement = createInventoryAdjustment(ingredient, current, input, id, new Date());
+    await movements.create(movement);
+  });
+  return movement!;
 }

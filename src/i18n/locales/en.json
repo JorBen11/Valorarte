@@ -24,7 +24,9 @@
     "unknownUnit": "Choose a unit from the list.",
     "dimensionMismatch": "The unit does not match the measurement type.",
     "negative": "The value cannot be negative.",
-    "invalidNumber": "Enter a number, for example 1.5."
+    "invalidNumber": "Enter a number, for example 1.5.",
+    "notPositive": "Enter a quantity greater than zero.",
+    "insufficientStock": "There is not enough stock for this outflow."
   },
   "units": {
     "dimension": {
@@ -99,7 +101,6 @@
     "title": "Ingredients",
     "add": "Add ingredient",
     "empty": "Add the raw materials you buy so Valorarte can track stock and costs.",
-    "lowStockAt": "Low stock at {{quantity}} {{unit}}",
     "tracksLotsBadge": "Lots and expiry",
     "new": {
       "title": "New ingredient",
@@ -128,7 +129,109 @@
     "emptyTitle": "No ingredients yet",
     "count_one": "{{count}} ingredient",
     "count_other": "{{count}} ingredients",
-    "loading": "Loading ingredients…"
+    "loading": "Loading ingredients…",
+    "countFiltered": "{{shown}} of {{total}}",
+    "countFilteredA11y": "{{shown}} of {{total}} ingredients",
+    "openDetail": "Opens the ingredient details",
+    "noResultsTitle": "No results",
+    "noResults": "No ingredient matches your search or filters.",
+    "clearAll": "Clear search and filters",
+    "search": {
+      "placeholder": "Search by name or category",
+      "clear": "Clear search"
+    },
+    "filters": {
+      "title": "Filter ingredients",
+      "open_zero": "Filters",
+      "open_one": "Filters, {{count}} active",
+      "open_other": "Filters, {{count}} active",
+      "stock": "Stock",
+      "category": "Category",
+      "allCategories": "All",
+      "clear": "Clear filters",
+      "clearShort": "Clear",
+      "show_one": "Show {{count}} result",
+      "show_other": "Show {{count}} results"
+    },
+    "stockFilter": {
+      "all": "All",
+      "low": "Low stock",
+      "out": "Out of stock",
+      "unknown": "Not recorded"
+    },
+    "sort": {
+      "title": "Sort by",
+      "open": "Sort: {{sort}}",
+      "name": "Name (A–Z)",
+      "quantity": "Quantity available (lowest first)",
+      "restock": "Restock priority",
+      "recent": "Recent activity"
+    },
+    "stock": {
+      "quantity": "{{quantity}} {{unit}}",
+      "available": "{{quantity}} available",
+      "notRecorded": "Not recorded",
+      "lowAt": "Low stock · alert at {{threshold}}",
+      "status": {
+        "ok": "In stock",
+        "low": "Low stock",
+        "out": "Out of stock",
+        "unknown": "Stock not recorded"
+      }
+    },
+    "detail": {
+      "loading": "Loading ingredient…",
+      "edit": "Edit ingredient",
+      "notFoundTitle": "This ingredient no longer exists",
+      "notFound": "The ingredient was not found. Go back to the list to see the current data.",
+      "backToList": "Back to ingredients",
+      "available": "Available",
+      "unknownStockHint": "Record an inflow to start tracking stock.",
+      "threshold": "Low-stock alert",
+      "noThreshold": "No alert",
+      "averageCost": "Average cost",
+      "costUnavailable": "Not calculable",
+      "costUnavailableHint": "It will be calculated once you record purchases.",
+      "measureValue": "{{dimension}} · {{unit}}",
+      "baseUnit": "Stored internally in {{unit}}.",
+      "on": "On",
+      "off": "Off",
+      "created": "Created: {{date}}",
+      "noMovements": "No movements yet. Adjustments, and later purchases and production, will appear here.",
+      "section": {
+        "info": "Details",
+        "movements": "Movements"
+      },
+      "field": {
+        "measure": "Measure",
+        "updated": "Last modified"
+      }
+    },
+    "movement": {
+      "in": "Inflow",
+      "out": "Outflow",
+      "inventory_adjustment_in": "Inflow adjustment",
+      "inventory_adjustment_out": "Outflow adjustment"
+    },
+    "adjust": {
+      "title": "Adjust stock",
+      "direction": "Adjustment type",
+      "quantity": "Quantity",
+      "current": "Now",
+      "after": "After",
+      "insufficient": "Not enough",
+      "reason": "Reason",
+      "reasonHint": "For example: physical count, damaged goods or opening stock.",
+      "valuationNote": "An adjustment changes the quantity available, not the cost. Average cost will be calculated from purchases.",
+      "save": "Record adjustment",
+      "discardTitle": "Discard this adjustment?"
+    },
+    "edit": {
+      "title": "Edit ingredient",
+      "save": "Save changes",
+      "discardTitle": "Discard your changes?",
+      "dimensionLocked": "It can’t be changed because stock is recorded in this measure."
+    }
   },
   "products": {
     "title": "Products"

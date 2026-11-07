@@ -5,6 +5,7 @@ import { translateSqliteError, type SqlDatabase } from '../database/database';
 
 export interface IngredientRepository {
   create(ingredient: Ingredient): Promise<void>;
+  update(ingredient: Ingredient): Promise<void>;
   findById(id: string): Promise<Ingredient | null>;
   listByBusiness(businessId: string): Promise<Ingredient[]>;
 }
@@ -66,6 +67,26 @@ export class SqliteIngredientRepository implements IngredientRepository {
     } catch (error) {
       throw translateSqliteError(error);
     }
+  }
+
+  /** `business_id`, `dimension` y `created_at` no se modifican. */
+  async update(i: Ingredient): Promise<void> {
+    await this.db.runAsync(
+      `UPDATE ingredients SET name = ?, category = ?, inventory_unit_code = ?, low_stock_threshold = ?,
+         tracks_lots = ?, is_active = ?, notes = ?, updated_at = ?
+       WHERE id = ?`,
+      [
+        i.name,
+        i.category,
+        i.inventoryUnitCode,
+        i.lowStockThreshold,
+        i.tracksLots ? 1 : 0,
+        i.isActive ? 1 : 0,
+        i.notes,
+        i.updatedAt,
+        i.id,
+      ],
+    );
   }
 
   async findById(id: string): Promise<Ingredient | null> {

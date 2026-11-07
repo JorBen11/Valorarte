@@ -20,8 +20,11 @@ export function formatNormalizedQuantity(
   return formatQuantity(convert(normalized, BASE_UNITS[dimension], displayUnit), decimalSeparator);
 }
 
-/** Convierte lo que escribe el usuario ("1,5") en texto decimal del dominio ("1.5"). */
+/**
+ * Convierte lo que escribe el usuario ("1,5") en texto decimal del dominio ("1.5").
+ * Acepta coma o punto aunque la región use el otro: el teclado decimal de Android ofrece
+ * ambos y no se aceptan separadores de miles, así que cualquiera de los dos es el decimal.
+ */
 export function normalizeDecimalInput(text: string, decimalSeparator: string): string {
-  const trimmed = text.trim();
-  return decimalSeparator === '.' ? trimmed : trimmed.replace(decimalSeparator, '.');
+  return text.trim().replace(decimalSeparator, '.').replace(',', '.');
 }

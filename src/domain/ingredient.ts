@@ -35,6 +35,21 @@ export interface NewIngredientInput {
   notes?: string | null;
 }
 
+export type IngredientChanges = Omit<NewIngredientInput, 'businessId' | 'dimension'>;
+
+/**
+ * Edición: la dimensión no cambia porque los movimientos están normalizados a su unidad base.
+ * Cambiar la unidad de inventario solo cambia la presentación.
+ */
+export function updateIngredient(existing: Ingredient, changes: IngredientChanges, now: Date): Ingredient {
+  const updated = createIngredient(
+    { ...changes, businessId: existing.businessId, dimension: existing.dimension },
+    existing.id,
+    now,
+  );
+  return { ...updated, isActive: existing.isActive, createdAt: existing.createdAt };
+}
+
 export function createIngredient(input: NewIngredientInput, id: string, now: Date): Ingredient {
   const issues: ValidationIssue[] = [];
   if (!isUuid(id)) issues.push({ field: 'id', code: 'invalid' });

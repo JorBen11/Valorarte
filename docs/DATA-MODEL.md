@@ -376,6 +376,8 @@ Los movimientos confirmados no se borran silenciosamente.
 
 `normalizedQuantityDelta` está expresado en la unidad base de la dimensión del artículo (`BUSINESS-RULES.md` §3). `quantityDelta` y `unitCode` conservan la cantidad y la unidad originales.
 
+**Estado de la implementación (migración 2, 2026-10-28):** tabla `inventory_movements` con `affects_valuation`. Por ahora `item_type` solo admite `ingredient` e `item_id` referencia `ingredients`; `variantId` y `lotId` se añadirán con productos y lotes. Unos triggers rechazan `UPDATE` y `DELETE`: las correcciones son movimientos nuevos. La app solo genera `inventory_adjustment`. Las existencias se calculan sumando los deltas con aritmética exacta en el dominio (no `SUM` de SQL, que usa REAL); un artículo sin movimientos tiene existencias desconocidas, no cero.
+
 ### Valor del movimiento y valor acumulado
 
 Decisión aprobada (2026-10-25). Se aplica `BUSINESS-RULES.md` §5.

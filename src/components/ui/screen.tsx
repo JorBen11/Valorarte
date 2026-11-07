@@ -41,6 +41,7 @@ export function Screen({ title, titleAccessory, children, overlay, bottomInset =
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { paddingHorizontal: spacing.xl, paddingTop: spacing.xl, gap: spacing.xxl },
-  titleRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.md },
+  // Centrado: el accesorio es un elemento con forma (pill), no texto que comparta línea base con el título.
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   title: { flexShrink: 1 },
 });

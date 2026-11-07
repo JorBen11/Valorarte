@@ -139,7 +139,7 @@ El sistema debe definir y probar cómo maneja estos casos. No están decididos:
 
 - Valoración del inventario inicial.
 - Valoración de las devoluciones que reingresan al inventario.
-- Valoración de los ajustes positivos y negativos.
+- Valoración de los ajustes positivos y negativos. Decisión provisional (2026-10-28): mientras no existan compras, los ajustes (`inventory_adjustment`) cambian solo la cantidad y se registran con `affectsValuation = false`; requieren motivo y no pueden dejar stock negativo. Antes de implementar compras debe decidirse cómo se valoran, porque una cantidad sin valor distorsiona valor acumulado / cantidad acumulada.
 - Anulación de compras, incluida la de compras cuyo stock ya se consumió.
 - Tratamiento económico de la merma (ver también §6).
 - Destino de los residuos de redondeo entre el valor acumulado y los importes cuantizados. Se resolverá al implementar cada operación (§19.3).
