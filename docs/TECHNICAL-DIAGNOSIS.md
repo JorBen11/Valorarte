@@ -1,5 +1,7 @@
 # Valorarte — Diagnóstico técnico (Fase 0)
 
+> **Documento histórico.** Registra el estado y las decisiones de la Fase 0 tal como eran entonces, incluidos paleta, tipografía (Plus Jakarta Sans), contraste y versiones. No describe la identidad vigente: la dirección oficial, Etiqueta refinada, está en `docs/DESIGN-SYSTEM.md`. Tampoco actualiza versiones: `package.json` manda.
+
 Fecha: 2026-10-23. Estado previo conservado en la rama `chore/pre-fase-0` (commit `6fe722e`).
 
 ## 1. Estado inicial encontrado
