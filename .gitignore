@@ -44,3 +44,11 @@ app-example
 
 # ia
 graphify-out
+
+# Claude Code - configuración y recursos locales
+.claude/settings.local.json
+.claude/agents/
+.claude/skills/impeccable/
+
+# Impeccable - configuración y recursos locales
+.impeccable/
