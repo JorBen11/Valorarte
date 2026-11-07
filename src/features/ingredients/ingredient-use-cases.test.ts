@@ -105,6 +105,54 @@ describe('existencias por movimientos', () => {
     expect((await loadIngredientDetail(db, id))?.movements).toHaveLength(1);
   });
 
+  it('dos ajustes simultáneos se aplican de uno en uno: el segundo ve el saldo del primero', async () => {
+    const { id } = await setup(null);
+    await recordInventoryAdjustment(db, id, { direction: 'in', quantity: '1', unitCode: 'kg', reason: 'Inicial' }, uuid());
+
+    const out = { direction: 'out', quantity: '0.6', unitCode: 'kg', reason: 'Uso' } as const;
+    const results = await Promise.allSettled([
+      recordInventoryAdjustment(db, id, out, uuid()),
+      recordInventoryAdjustment(db, id, out, uuid()),
+    ]);
+
+    expect(results.map((r) => r.status)).toEqual(['fulfilled', 'rejected']);
+    expect((results[1] as PromiseRejectedResult).reason).toBeInstanceOf(DomainValidationError);
+    const detail = await loadIngredientDetail(db, id);
+    expect(detail?.stock).toEqual(parseDecimal('400'));
+    expect(detail?.movements).toHaveLength(2);
+  });
+
+  it('las entradas simultáneas se registran todas', async () => {
+    const { id } = await setup(null);
+    const entry = { direction: 'in', quantity: '1', unitCode: 'kg', reason: 'Compra' } as const;
+    await Promise.all([1, 2, 3].map(() => recordInventoryAdjustment(db, id, entry, uuid())));
+    const detail = await loadIngredientDetail(db, id);
+    expect(detail?.stock).toEqual(parseDecimal('3000'));
+    expect(detail?.movements).toHaveLength(3);
+  });
+
+  it('un fallo dentro de la transacción conserva stock e historial y no bloquea el siguiente ajuste', async () => {
+    const { id } = await setup(null);
+    await recordInventoryAdjustment(db, id, { direction: 'in', quantity: '1', unitCode: 'kg', reason: 'Inicial' }, uuid());
+
+    let fail = true;
+    const failing: SqlDatabase = {
+      ...db,
+      runAsync: (source, params) =>
+        fail && source.includes('INSERT INTO inventory_movements') ? Promise.reject(new Error('disk I/O error')) : db.runAsync(source, params),
+    };
+    const out = { direction: 'out', quantity: '0.25', unitCode: 'kg', reason: 'Uso' } as const;
+    await expect(recordInventoryAdjustment(failing, id, out, uuid())).rejects.toThrow('disk I/O error');
+
+    const after = await loadIngredientDetail(db, id);
+    expect(after?.stock).toEqual(parseDecimal('1000'));
+    expect(after?.movements).toHaveLength(1);
+
+    fail = false;
+    await recordInventoryAdjustment(failing, id, out, uuid());
+    expect((await loadIngredientDetail(db, id))?.stock).toEqual(parseDecimal('750'));
+  });
+
   it('queda en cero (sin existencias) tras retirar todo', async () => {
     const { id } = await setup(null);
     await recordInventoryAdjustment(db, id, { direction: 'in', quantity: '1', unitCode: 'kg', reason: 'Inicial' }, uuid());

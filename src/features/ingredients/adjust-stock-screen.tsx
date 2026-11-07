@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, Stack, useLocalSearchParams, usePreventRemove } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +19,7 @@ import type { UnitCode } from '@/domain/units';
 import { DomainValidationError } from '@/domain/validation';
 import { fieldErrors } from '@/features/validation-messages';
 import { normalizeDecimalInput } from '@/i18n/format-quantity';
+import { singleFlight } from '@/lib/single-flight';
 import { columnsFor, FORM_MAX_WIDTH, useWindowLayout } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
 import { fontFamily, spacing, typography } from '@/theme/tokens';
@@ -45,6 +46,7 @@ export function AdjustStockScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const saveLock = useRef(false);
   const [pendingLeave, setPendingLeave] = useState<(() => void) | null>(null);
 
   useEffect(() => {
@@ -99,19 +101,22 @@ export function AdjustStockScreen() {
   const after = previewStockAfter(stock, input);
   const negative = after !== null && compare(after, ZERO) < 0;
 
-  async function save() {
-    if (database.status !== 'ready' || saving) return;
-    setSaving(true);
-    setFormError(null);
-    try {
-      await recordInventoryAdjustment(database.db, ingredientId, input);
-      disablePrevention();
-      router.back();
-    } catch (error) {
-      if (error instanceof DomainValidationError) setErrors(fieldErrors(error, t));
-      else setFormError(t(error instanceof IngredientNotFoundError ? 'ingredients.detail.notFound' : 'common.saveError'));
-      setSaving(false);
-    }
+  function save() {
+    if (database.status !== 'ready') return;
+    const { db } = database;
+    return singleFlight(saveLock, async () => {
+      setSaving(true);
+      setFormError(null);
+      try {
+        await recordInventoryAdjustment(db, ingredientId, input);
+        disablePrevention();
+        router.back();
+      } catch (error) {
+        if (error instanceof DomainValidationError) setErrors(fieldErrors(error, t));
+        else setFormError(t(error instanceof IngredientNotFoundError ? 'ingredients.detail.notFound' : 'common.saveError'));
+        setSaving(false);
+      }
+    });
   }
 
   return (

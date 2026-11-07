@@ -110,12 +110,32 @@ export async function editIngredient(db: SqlDatabase, id: string, changes: Ingre
   return updated;
 }
 
-/** Lee el stock y escribe el movimiento en la misma transacción para no aceptar un ajuste sobre un saldo obsoleto. */
-export async function recordInventoryAdjustment(
+// `withTransactionAsync` no es exclusiva: otra llamada en la misma conexión se intercala y falla al abrir su
+// transacción o lee un saldo obsoleto. `withExclusiveTransactionAsync` abriría una conexión sin
+// `foreign_keys` ni `busy_timeout`, así que los ajustes se encolan por base de datos.
+const adjustmentQueue = new WeakMap<SqlDatabase, Promise<unknown>>();
+
+function serialized<T>(db: SqlDatabase, task: () => Promise<T>): Promise<T> {
+  const run = (adjustmentQueue.get(db) ?? Promise.resolve()).then(task);
+  adjustmentQueue.set(db, run.catch(() => undefined));
+  return run;
+}
+
+/** Lee el stock y escribe el movimiento en la misma transacción, de uno en uno, para no aceptar un ajuste sobre un saldo obsoleto. */
+export function recordInventoryAdjustment(
   db: SqlDatabase,
   ingredientId: string,
   input: InventoryAdjustmentInput,
   id: string = newId(),
+): Promise<InventoryMovement> {
+  return serialized(db, () => adjustInTransaction(db, ingredientId, input, id));
+}
+
+async function adjustInTransaction(
+  db: SqlDatabase,
+  ingredientId: string,
+  input: InventoryAdjustmentInput,
+  id: string,
 ): Promise<InventoryMovement> {
   let movement: InventoryMovement | undefined;
   await db.withTransactionAsync(async () => {
