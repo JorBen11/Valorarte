@@ -200,6 +200,8 @@ El procedimiento operativo (inspeccionar, identificar la tarea, elegir composici
 
 Reglas permanentes que lo acompañan:
 
+- **Listados, detalles y flujos de entidades** cumplen los criterios 11–20 de la sección 12 de la skill: cantidad con unidad en las filas, búsqueda/filtros/orden desde el diseño inicial, lo pulsable navega a un detalle real, historial verídico e inmutable, nada inventado y evaluación como flujo completo.
+
 - **La interfaz no es principalmente texto por defecto.** Valorarte es una herramienta de gestión: organiza la información con iconos semánticos, indicadores de estado, selectores gráficos, datos destacados o representaciones de cantidades cuando comunican mejor que una frase. No es obligatorio usarlos todos; lo obligatorio es elegir.
 - **Reutilizar un componente no significa reutilizar el mismo diseño.** Dos preferencias de selección única pueden necesitar controles distintos (por ejemplo, Apariencia e Idioma en Ajustes).
 - **No uses banderas nacionales para representar idiomas.**

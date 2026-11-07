@@ -321,6 +321,19 @@ Una tarea de UI no está terminada solo porque compila o reutiliza componentes c
 9. **Dominio intacto:** no se modificaron reglas de negocio, datos ni persistencia.
 10. **Honestidad:** el informe separa las comprobaciones automáticas de la inspección visual y enumera lo que quedó sin verificar.
 
+Para listados, detalles y flujos que manejan entidades (ingredientes, productos, ventas…):
+
+11. **Dato principal en la fila:** una fila de inventario muestra la cantidad disponible con su unidad («2,5 kg»), nunca solo la unidad. Si no hay movimientos, muestra «Sin registrar» explícitamente, no «0».
+12. **Listados preparados para crecer:** todo listado que pueda superar una pantalla tiene, desde su primera versión, búsqueda con limpiar, filtros acordes al modelo real, ordenación con un orden predeterminado estable, estado vacío distinto del estado «sin resultados» y una acción para quitar búsqueda y filtros. Los controles ocupan como máximo una fila más una línea de filtros activos; el resto va en hojas.
+13. **Sin filtros imposibles:** cada filtro u orden se corresponde con un dato persistido; si el modelo no tiene vencimientos, no hay filtro de vencimientos.
+14. **Lo pulsable navega:** un elemento con aspecto seleccionable (chevron, fila completa, ripple) tiene `onPress` real, rol accesible y un destino coherente. Si no hay destino, no se dibuja como pulsable.
+15. **Detalle jerárquico:** una entidad con más información de la que cabe en su fila tiene pantalla de detalle con: identidad y estado arriba; cifra principal destacada; metadatos agrupados sin repetir lo ya mostrado; historial real, más reciente primero, con estado vacío informativo. Gestiona carga, error y registro inexistente.
+16. **Historial verídico:** los movimientos salen de datos persistidos e inmutables. Las correcciones son movimientos nuevos con motivo; editar la entidad no altera el historial. Nunca se generan movimientos de ejemplo ni retroactivos.
+17. **Sin valores inventados:** un costo, valor o métrica que no puede calcularse con los datos existentes se muestra como «No calculable» con el motivo, no como 0 ni como estimación sin marcar.
+18. **Acciones reales:** no hay botones de operaciones que aún no existen. Si una operación depende de un flujo pendiente, se documenta la dependencia en lugar de simularla.
+19. **Flujo completo:** se recorre listado → búsqueda/filtros → detalle → edición u operación → regreso, comprobando que el listado conserva búsqueda y filtros, que detalle y listado reflejan los cambios y que un registro desaparecido o que deja de cumplir un filtro no rompe la pantalla.
+20. **Reutilizar no es conformarse:** usar un componente existente no justifica omitir funciones del listado o del detalle ni aceptar una composición inadecuada; si el componente no cubre el caso, se amplía o se crea uno compartido.
+
 ### Revisión final
 
 Si la interfaz sigue pareciendo genérica, no intentes resolverlo añadiendo sombras, iconos o colores. Vuelve a revisar la composición, la jerarquía y la representación de los datos.
