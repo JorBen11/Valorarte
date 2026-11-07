@@ -24,7 +24,7 @@ export function Fab({ icon, accessibilityLabel, onPress }: FabProps) {
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         onPress={onPress}
-        android_ripple={{ color: colors.brandSubtle, borderless: false }}
+        android_ripple={{ color: colors.border, borderless: false }}
         style={({ pressed }) => [
           styles.button,
           { backgroundColor: colors.primary },

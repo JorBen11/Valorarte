@@ -54,7 +54,7 @@ El `package.json` proporcionado declara:
 - SQLite mediante Expo SQLite.
 - Reanimated para animaciones.
 - `@expo/vector-icons`, con MaterialCommunityIcons ya utilizado.
-- Plus Jakarta Sans como familia tipográfica.
+- Figtree y Bricolage Grotesque como familias tipográficas.
 - i18next y react-i18next para traducciones.
 
 El `package.json` y el lockfile son la referencia para verificar dependencias. Comprueba también la versión instalada antes de realizar cambios de compatibilidad.
@@ -102,14 +102,19 @@ Las reglas de negocio son independientes de la presentación. Un rediseño nunca
 
 ## 7. Identidad y decisiones visuales aprobadas
 
-La personalidad de Valorarte es **premium, elegante, cálida, clara y práctica**.
+La dirección oficial es **Etiqueta refinada** (aprobada el 2026-11-01). Su personalidad es **experimental sin extravagancia, minimalista sin frialdad, cercana, alegre y profesional**.
 
 El diseño no debe parecer una plantilla genérica de React Native, Expo, Material Design ni una interfaz generada automáticamente.
 
+`docs/DESIGN-SYSTEM.md` define la identidad y separa lo aprobado, lo pendiente y lo no validado en Android. La aplicación la implementa en `src/theme/tokens.ts`, `src/theme/layout.ts` y `src/components/ui/`.
+
 Las decisiones aprobadas son vinculantes:
 
-- Mantener la paleta existente en `docs/DESIGN-SYSTEM.md`.
-- Mantener Plus Jakarta Sans y los tokens existentes, salvo que se demuestre un problema concreto.
+- Usar la paleta y los tokens semánticos de `docs/DESIGN-SYSTEM.md`: menta, rosa mexicano, amarillo sol y verde tinta, más un color discreto para errores y acciones destructivas.
+- Usar Bricolage Grotesque para títulos y Figtree para cifras, texto y controles.
+- Reservar la etiqueta con ojal según su jerarquía: una principal por pantalla como máximo, compactas solo para cantidades que piden atención y elementos neutros o circulares para lo demás.
+- Mostrar centavos elevados solo en el importe principal; con texto ampliado prevalece la legibilidad.
+- Representar ingredientes con fotografía o emoji, y productos solo con fotografía. Nunca depender de URI temporales de la galería.
 - Usar una sola familia principal de iconos: MaterialCommunityIcons, salvo que exista una razón técnica aprobada para otra solución.
 - Reservar la posibilidad de incorporar SVG propios de la marca, como ilustraciones, símbolos o elementos de carga.
 - Mostrar los cuatro iconos de navegación inferior permanentemente; mostrar la etiqueta únicamente en la pestaña activa, con una transición sutil.
@@ -212,7 +217,7 @@ Reglas permanentes que lo acompañan:
 
 Conserva las cuatro secciones principales: Inicio, Ingredientes, Productos y Ajustes.
 
-La barra inferior debe mantener los cuatro iconos visibles y mostrar la etiqueta solo en la pestaña activa. La transición debe ser sutil, legible y no alterar el ancho de forma brusca.
+La navegación debe mantener los cuatro iconos visibles y mostrar la etiqueta solo en la sección activa. Es una barra inferior en ventanas compactas y una navegación lateral desde 600 dp, según `docs/DESIGN-SYSTEM.md`, sección 18. La transición debe ser sutil, legible y no alterar el ancho de forma brusca.
 
 Comprueba safe areas, teclado, desplazamiento, superposición con FAB y navegación hacia formularios. Respeta las preferencias de movimiento reducido cuando la solución técnica lo permita.
 
@@ -230,13 +235,22 @@ Todas las pantallas que dependan de datos deben contemplar los estados pertinent
 
 No inventes métricas, contenido de ejemplo ni datos que puedan confundirse con información real. Diferencia visual y textualmente estimaciones, información incompleta y valores definitivos.
 
+### 8.8 Diseño adaptativo
+
+Valorarte debe adaptarse a teléfonos, tablets, plegables y multiventana en Android. Las reglas están en `docs/DESIGN-SYSTEM.md`, sección 18, y la matriz por pantalla en `docs/SCREENS.md`, sección 13. Están implementadas; usa `useWindowLayout` y `columnsFor`.
+
+- Decide por espacio disponible en dp, nunca por tipo de dispositivo.
+- Usa las clases de ventana centralizadas; no compares anchos dentro de las pantallas.
+- No uses anchuras fijas para contener texto ni reduzcas el texto para encajar una composición.
+- Adapta los plegables por tamaño de ventana. No añadas un módulo de bisagra ni afirmes ese soporte por responder a un cambio de ancho.
+
 ## 9. Accesibilidad e internacionalización
 
 - Usa etiquetas accesibles descriptivas en los controles icon-only.
 - No dependas exclusivamente del color para comunicar estados.
 - Mantén contraste suficiente y áreas táctiles adecuadas.
 - Comprueba la interfaz con textos largos y ampliación de fuente.
-- No uses emojis ni caracteres Unicode como sustitutos de iconos funcionales.
+- No uses emojis ni caracteres Unicode como sustitutos de iconos funcionales. Excepción explícita: un emoji puede representar un ingrediente, porque es contenido del usuario. Los lectores de pantalla anuncian el nombre del ingrediente, no el emoji.
 - Toda cadena visible debe estar localizada mediante el sistema de traducciones existente.
 - No construyas frases concatenando fragmentos traducidos si eso rompe el orden gramatical de otros idiomas.
 - Los números, importes y cantidades deben formatearse según la configuración regional y las reglas de dominio.

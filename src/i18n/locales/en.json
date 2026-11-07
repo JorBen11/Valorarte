@@ -95,7 +95,19 @@
     }
   },
   "home": {
-    "title": "Home"
+    "title": "Home",
+    "attention": "To restock",
+    "allGood": "No ingredient needs attention.",
+    "noIngredients": "No ingredients yet",
+    "noIngredientsHint": "Add them to track your stock from here.",
+    "goIngredients": "Go to Ingredients",
+    "pendingTitle": "Sales and profitability",
+    "pending": "They will appear here once sales recording is available.",
+    "summary": "Inventory",
+    "tracked": "Ingredients",
+    "low": "Low stock",
+    "out": "Out of stock",
+    "unknown": "Not recorded"
   },
   "ingredients": {
     "title": "Ingredients",
@@ -231,10 +243,13 @@
       "save": "Save changes",
       "discardTitle": "Discard your changes?",
       "dimensionLocked": "It can’t be changed because stock is recorded in this measure."
-    }
+    },
+    "selectHint": "Choose an ingredient to see its details."
   },
   "products": {
-    "title": "Products"
+    "title": "Products",
+    "unavailableTitle": "Products not available yet",
+    "unavailable": "Prices, costs and margins will appear here once the catalog is available."
   },
   "settings": {
     "title": "Settings",
@@ -249,6 +264,14 @@
       "system": "System",
       "es": "Español",
       "en": "English"
+    },
+    "business": {
+      "title": "Business",
+      "name": "Name",
+      "currency": "Currency",
+      "units": "Units",
+      "category": "Activity",
+      "none": "You haven't set up your business yet."
     }
   }
 }

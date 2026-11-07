@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { FloatingTabBar, type TabIcons } from '@/components/ui/tab-bar';
+import { useWindowLayout } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
 
 // Exactamente cuatro secciones principales (CLAUDE.md §5). Icono relleno = pestaña activa.
@@ -17,11 +18,12 @@ const ICONS = Object.fromEntries(TABS.map(({ name, icon, activeIcon }) => [name,
 export default function TabLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { sideNavigation } = useWindowLayout();
 
   return (
     <Tabs
       tabBar={(props) => <FloatingTabBar {...props} icons={ICONS} />}
-      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }}>
+      screenOptions={{ headerShown: false, tabBarPosition: sideNavigation ? 'left' : 'bottom', sceneStyle: { backgroundColor: colors.background } }}>
       {TABS.map(({ name, titleKey }) => (
         <Tabs.Screen key={name} name={name} options={{ title: t(titleKey) }} />
       ))}

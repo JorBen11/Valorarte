@@ -3,7 +3,7 @@
     "name": "Valorarte",
     "slug": "Valorarte",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "valorarte",
     "userInterfaceStyle": "automatic",
@@ -31,9 +31,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#FAF7F4",
+          "backgroundColor": "#CFEEDD",
           "dark": {
-            "backgroundColor": "#17141A"
+            "backgroundColor": "#10261C"
           }
         }
       ],

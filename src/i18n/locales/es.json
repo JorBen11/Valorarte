@@ -95,7 +95,19 @@
     }
   },
   "home": {
-    "title": "Inicio"
+    "title": "Inicio",
+    "attention": "Por reponer",
+    "allGood": "Ningún ingrediente pide atención.",
+    "noIngredients": "Aún no hay ingredientes",
+    "noIngredientsHint": "Regístralos para vigilar tus existencias desde aquí.",
+    "goIngredients": "Ir a Ingredientes",
+    "pendingTitle": "Ventas y rentabilidad",
+    "pending": "Aparecerán aquí cuando el registro de ventas esté disponible.",
+    "summary": "Inventario",
+    "tracked": "Ingredientes",
+    "low": "Stock bajo",
+    "out": "Sin existencias",
+    "unknown": "Sin registrar"
   },
   "ingredients": {
     "title": "Ingredientes",
@@ -231,10 +243,13 @@
       "save": "Guardar cambios",
       "discardTitle": "¿Descartar los cambios?",
       "dimensionLocked": "No se puede cambiar porque las existencias se registran en esta medida."
-    }
+    },
+    "selectHint": "Elige un ingrediente para ver su detalle."
   },
   "products": {
-    "title": "Productos"
+    "title": "Productos",
+    "unavailableTitle": "Productos aún no disponibles",
+    "unavailable": "Aquí verás precios, costos y márgenes cuando el catálogo esté disponible."
   },
   "settings": {
     "title": "Ajustes",
@@ -249,6 +264,14 @@
       "system": "Sistema",
       "es": "Español",
       "en": "English"
+    },
+    "business": {
+      "title": "Negocio",
+      "name": "Nombre",
+      "currency": "Moneda",
+      "units": "Unidades",
+      "category": "Actividad",
+      "none": "Aún no has configurado tu negocio."
     }
   }
 }

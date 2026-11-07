@@ -1,9 +1,5 @@
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from '@expo-google-fonts/plus-jakarta-sans';
+import { BricolageGrotesque_600SemiBold } from '@expo-google-fonts/bricolage-grotesque';
+import { Figtree_400Regular, Figtree_500Medium, Figtree_600SemiBold, Figtree_700Bold } from '@expo-google-fonts/figtree';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -44,10 +40,11 @@ function RootStack() {
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    [fontFamily.regular]: PlusJakartaSans_400Regular,
-    [fontFamily.medium]: PlusJakartaSans_500Medium,
-    [fontFamily.semiBold]: PlusJakartaSans_600SemiBold,
-    [fontFamily.bold]: PlusJakartaSans_700Bold,
+    [fontFamily.regular]: Figtree_400Regular,
+    [fontFamily.medium]: Figtree_500Medium,
+    [fontFamily.semiBold]: Figtree_600SemiBold,
+    [fontFamily.bold]: Figtree_700Bold,
+    [fontFamily.display]: BricolageGrotesque_600SemiBold,
   });
   useApplyLanguage();
 

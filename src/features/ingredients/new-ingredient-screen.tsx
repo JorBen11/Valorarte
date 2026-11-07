@@ -3,11 +3,12 @@ import { getLocales } from 'expo-localization';
 import { router, Stack, useLocalSearchParams, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
+import { IconButton, StatusMessage } from '@/components/ui/surface';
 import { ChoiceChips } from '@/components/ui/choice-chips';
 import { FormSection } from '@/components/ui/form-section';
 import { SelectField } from '@/components/ui/select-field';
@@ -22,13 +23,15 @@ import { BASE_UNITS, type Dimension, type UnitCode } from '@/domain/units';
 import { DomainValidationError } from '@/domain/validation';
 import { fieldErrors } from '@/features/validation-messages';
 import { formatNormalizedQuantity, normalizeDecimalInput } from '@/i18n/format-quantity';
+import { columnsFor, FORM_MAX_WIDTH, useWindowLayout } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
-import { fontFamily, minTouchTarget, spacing, typography } from '@/theme/tokens';
+import { fontFamily, spacing, typography } from '@/theme/tokens';
 
 import { editIngredient, IngredientNotFoundError, loadIngredientDetail, registerIngredient } from './ingredient-use-cases';
 import { DIMENSION_ICONS, dimensionLabel, unitLabel, unitName, unitsOfDimension } from './unit-labels';
 
 const DIMENSIONS = Object.keys(BASE_UNITS) as Dimension[];
+const MIN_FORM_COLUMN = 340;
 
 /** Alta (`businessId`) o edición (`ingredientId`) con el mismo formulario. */
 export function NewIngredientScreen() {
@@ -47,7 +50,7 @@ export function NewIngredientScreen() {
   if (existing !== 'loading' && existing !== 'error' && existing !== null) return <IngredientForm existing={existing} businessId={existing.businessId} />;
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <Stack.Screen options={{ headerShown: true, title: t('ingredients.edit.title'), headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('ingredients.edit.title'), headerShadowVisible: false, headerStyle: { backgroundColor: colors.background }, headerTintColor: colors.textPrimary, headerTitleStyle: { fontFamily: fontFamily.display, fontSize: 20 } }} />
       {existing === 'loading' ? (
         <LoadingView message={t('common.loading')} />
       ) : (
@@ -78,6 +81,10 @@ function IngredientForm({ existing, businessId }: { existing?: Ingredient; busin
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const database = useDatabase();
+  const layout = useWindowLayout();
+  // Dos columnas solo con espacio, altura y letra suficientes; nunca se reduce el texto para lograrlas.
+  const twoColumns = !layout.isShort && layout.widthClass !== 'compact' && layout.widthClass !== 'medium' && columnsFor(layout.width - layout.gutter * 2, MIN_FORM_COLUMN, layout.fontScale) > 1;
+  const formWidth = twoColumns ? { maxWidth: FORM_MAX_WIDTH * 1.4 } : { maxWidth: FORM_MAX_WIDTH };
 
   const [initial] = useState(() => ({
     name: existing?.name ?? '',
@@ -157,21 +164,14 @@ function IngredientForm({ existing, businessId }: { existing?: Ingredient; busin
           headerStyle: { backgroundColor: colors.background },
           headerShadowVisible: false,
           headerTintColor: colors.textPrimary,
-          headerTitleStyle: { fontFamily: fontFamily.semiBold, fontSize: 18 },
-          headerLeft: () => (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t('common.close')}
-              hitSlop={8}
-              onPress={() => router.back()}
-              style={styles.close}>
-              <MaterialCommunityIcons name="close" size={24} color={colors.textPrimary} />
-            </Pressable>
-          ),
+          headerTitleStyle: { fontFamily: fontFamily.display, fontSize: 20 },
+          headerLeft: () => <IconButton bare icon="close" accessibilityLabel={t('common.close')} onPress={() => router.back()} />,
         }}
       />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.form}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.form, formWidth, { paddingHorizontal: layout.gutter }]}>
         <TextField label={t('ingredients.new.name')} value={name} onChangeText={setName} error={errors.name} />
+        <View style={twoColumns ? styles.columns : styles.stack}>
+        <View style={twoColumns ? styles.column : styles.stack}>
         <FormSection title={t('ingredients.new.section.measure')}>
           {existing ? (
             // Las existencias están normalizadas a la unidad base de esta dimensión: no se puede cambiar.
@@ -203,6 +203,8 @@ function IngredientForm({ existing, businessId }: { existing?: Ingredient; busin
             <Text style={[typography.caption, { color: colors.error }]}>{errors.inventoryUnitCode ?? errors.dimension}</Text>
           ) : null}
         </FormSection>
+        </View>
+        <View style={twoColumns ? styles.column : styles.stack}>
         <FormSection title={t('ingredients.new.section.inventory')}>
           <TextField
             label={optional(t('ingredients.new.threshold'))}
@@ -225,17 +227,15 @@ function IngredientForm({ existing, businessId }: { existing?: Ingredient; busin
           <TextField label={t('ingredients.new.category')} value={category} onChangeText={setCategory} />
           <TextField label={t('ingredients.new.notes')} value={notes} onChangeText={setNotes} multiline />
         </FormSection>
+        </View>
+        </View>
       </ScrollView>
       <View
         style={[
           styles.footer,
-          { borderTopColor: colors.border, backgroundColor: colors.background, paddingBottom: insets.bottom + spacing.md },
+          { borderTopColor: colors.border, backgroundColor: colors.background, paddingBottom: insets.bottom + spacing.md, paddingHorizontal: Math.max(layout.gutter, (layout.width - (twoColumns ? FORM_MAX_WIDTH * 1.4 : FORM_MAX_WIDTH)) / 2) },
         ]}>
-        {formError ? (
-          <Text accessibilityLiveRegion="polite" style={[typography.caption, { color: colors.error }]}>
-            {formError}
-          </Text>
-        ) : null}
+        {formError ? <StatusMessage kind="error" message={formError} /> : null}
         <Button label={t(existing ? 'ingredients.edit.save' : 'ingredients.new.save')} onPress={save} loading={saving} disabled={database.status !== 'ready'} />
       </View>
       <Dialog
@@ -262,9 +262,11 @@ function IngredientForm({ existing, businessId }: { existing?: Ingredient; busin
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  form: { padding: spacing.xl, gap: spacing.xxxl },
-  footer: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, gap: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
-  close: { minWidth: minTouchTarget, minHeight: minTouchTarget, justifyContent: 'center' },
+  form: { width: '100%', alignSelf: 'center', paddingVertical: spacing.xl, gap: spacing.xxxl },
+  stack: { gap: spacing.xxxl },
+  columns: { flexDirection: 'row', gap: spacing.xxxl, alignItems: 'flex-start' },
+  column: { flex: 1, minWidth: 0, gap: spacing.xxxl },
+  footer: { paddingTop: spacing.md, gap: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
   locked: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   lockedText: { flex: 1, gap: 2 },
 });

@@ -30,7 +30,7 @@ No crees un segundo sistema de diseño ni sustituyas la identidad aprobada por u
 
 ## 3. Dirección de arte obligatoria
 
-Valorarte debe sentirse premium, elegante, cálida, clara y práctica.
+Valorarte sigue la dirección Etiqueta refinada: experimental sin extravagancia, minimalista sin frialdad, cercana, alegre y profesional. Consulta en `docs/DESIGN-SYSTEM.md` qué está aprobado y qué sigue pendiente.
 
 No debe parecer una plantilla genérica de React Native, Expo, Material Design ni una interfaz generada automáticamente.
 
@@ -131,6 +131,8 @@ Recorre los estados que correspondan a la pantalla: normal, seleccionado, vacío
 
 ### Paso 8: revisar temas, accesibilidad y tamaños
 
+Comprueba además las clases de ventana y la orientación según `docs/DESIGN-SYSTEM.md`, sección 18.
+
 Tema claro y oscuro, contraste, áreas táctiles de al menos 48 dp, etiquetas accesibles en controles icon-only, textos largos en ambos idiomas y pantallas estrechas.
 
 ### Paso 9: ejecutar comprobaciones e inspección visual
@@ -150,12 +152,12 @@ Utiliza MaterialCommunityIcons, ya disponible en el proyecto.
 - Utiliza nombres de iconos adecuados al significado de la acción.
 - Conserva una escala y alineación consistentes.
 - Evita añadir un icono a cada texto por defecto.
-- No uses emojis como iconos funcionales.
+- No uses emojis como iconos funcionales. Única excepción: la representación de un ingrediente elegida por el usuario.
 - No uses banderas nacionales para representar idiomas: un idioma no equivale a un país. Usa un icono de idioma o traducción y el nombre del idioma.
 - No añadas un icono que repita exactamente lo que ya dice el texto contiguo.
 - No uses iconos ambiguos para acciones que requieren explicación.
 
-Los iconos pueden ser el único contenido visible de un botón cuando la acción sea reconocible en su contexto. Es obligatorio proporcionar una etiqueta accesible.
+Los iconos pueden ser el único contenido visible de un botón cuando la acción sea reconocible en su contexto. Es obligatorio proporcionar una etiqueta accesible. Las decisiones ya tomadas por acción están en la sección 7 de `docs/DESIGN-SYSTEM.md`; Producción lleva siempre icono y texto.
 
 Para acciones desconocidas, destructivas o de consecuencias importantes, conserva texto visible.
 
@@ -235,7 +237,7 @@ Comprueba los usos existentes antes de cambiar sus interfaces públicas.
 
 La barra inferior debe mostrar siempre los cuatro iconos principales y únicamente la etiqueta de la pestaña activa.
 
-Mantén la cápsula de fondo sólido, sin glassmorphism, y una transición discreta.
+Marca la pestaña activa con una cápsula de fondo sólido, sin glassmorphism, y una transición discreta.
 
 Comprueba:
 

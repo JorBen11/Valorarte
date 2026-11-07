@@ -34,24 +34,24 @@ export function OptionSheet<T extends string>({ visible, title, options, selecte
                 onSelect(option.value);
                 onClose();
               }}
-              android_ripple={{ color: colors.brandSubtle }}
-              style={[styles.option, isSelected && { backgroundColor: colors.brandSubtle }]}>
+              android_ripple={{ color: colors.surfaceRaised }}
+              style={[styles.option, isSelected && { backgroundColor: colors.surfaceRaised }]}>
               {option.icon ? (
                 <MaterialCommunityIcons
                   name={option.icon}
                   size={20}
-                  color={isSelected ? colors.primary : colors.textSecondary}
+                  color={isSelected ? colors.textPrimary : colors.textSecondary}
                 />
               ) : null}
               <Text
                 style={[
                   isSelected ? typography.itemTitle : typography.body,
                   styles.label,
-                  { color: isSelected ? colors.primary : colors.textPrimary },
+                  { color: colors.textPrimary },
                 ]}>
                 {option.label}
               </Text>
-              {isSelected ? <MaterialCommunityIcons name="check" size={22} color={colors.primary} /> : null}
+              {isSelected ? <MaterialCommunityIcons name="check" size={22} color={colors.textPrimary} /> : null}
             </Pressable>
           );
         })}
@@ -63,6 +63,7 @@ export function OptionSheet<T extends string>({ visible, title, options, selecte
 const styles = StyleSheet.create({
   option: {
     minHeight: minTouchTarget + 4,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',

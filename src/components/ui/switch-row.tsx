@@ -27,7 +27,7 @@ export function SwitchRow({ label, hint, value, onValueChange }: SwitchRowProps)
   }, [progress, value]);
 
   const track = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(progress.value, [0, 1], [colors.surfaceRaised, colors.primary]),
+    backgroundColor: interpolateColor(progress.value, [0, 1], [colors.surface, colors.primary]),
     borderColor: interpolateColor(progress.value, [0, 1], [colors.fieldBorder, colors.primary]),
   }));
   const thumb = useAnimatedStyle(() => ({
@@ -44,7 +44,7 @@ export function SwitchRow({ label, hint, value, onValueChange }: SwitchRowProps)
       onPress={() => onValueChange(!value)}
       style={styles.row}>
       <View style={styles.text}>
-        <Text style={[typography.label, { color: colors.textPrimary }]}>{label}</Text>
+        <Text style={[typography.body, { color: colors.textPrimary }]}>{label}</Text>
         {hint ? <Text style={[typography.caption, { color: colors.textSecondary }]}>{hint}</Text> : null}
       </View>
       <Animated.View style={[styles.track, track]}>

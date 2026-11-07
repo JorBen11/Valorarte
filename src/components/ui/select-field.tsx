@@ -32,7 +32,7 @@ export function SelectField<T extends string>({ label, options, selected, onSele
         accessibilityState={{ disabled, expanded: open }}
         disabled={disabled}
         onPress={() => setOpen(true)}
-        android_ripple={{ color: colors.brandSubtle }}
+        android_ripple={{ color: colors.surfaceRaised }}
         style={[
           styles.field,
           { backgroundColor: disabled ? colors.surfaceRaised : colors.surface, borderColor: colors.fieldBorder },
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.control,
     paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',

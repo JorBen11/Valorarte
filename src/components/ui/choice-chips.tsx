@@ -35,21 +35,21 @@ export function ChoiceChips<T extends string>({ label, options, selected, onSele
               accessibilityRole="radio"
               accessibilityState={{ checked: isSelected }}
               onPress={() => onSelect(option.value)}
-              android_ripple={{ color: colors.brandSubtle }}
+              android_ripple={{ color: colors.surfaceRaised }}
               style={[
                 styles.chip,
                 isSelected
-                  ? { backgroundColor: colors.primary, borderColor: colors.primary }
+                  ? { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary }
                   : { backgroundColor: colors.surface, borderColor: colors.fieldBorder },
               ]}>
               {option.icon ? (
                 <MaterialCommunityIcons
                   name={option.icon}
                   size={18}
-                  color={isSelected ? colors.onPrimary : colors.textSecondary}
+                  color={isSelected ? colors.background : colors.textSecondary}
                 />
               ) : null}
-              <Text style={[typography.label, { color: isSelected ? colors.onPrimary : colors.textPrimary }]}>
+              <Text style={[typography.label, styles.text, { color: isSelected ? colors.background : colors.textPrimary }]}>
                 {option.label}
               </Text>
             </Pressable>
@@ -63,11 +63,14 @@ export function ChoiceChips<T extends string>({ label, options, selected, onSele
 const styles = StyleSheet.create({
   container: { gap: spacing.sm },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  text: { flexShrink: 1 },
   chip: {
-    minHeight: minTouchTarget - 8,
+    minHeight: minTouchTarget,
+    maxWidth: '100%',
     paddingHorizontal: spacing.lg,
-    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
     borderWidth: 1,
+    borderRadius: radius.pill,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,

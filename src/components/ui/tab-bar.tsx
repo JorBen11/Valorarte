@@ -5,6 +5,7 @@ import { Keyboard, Platform, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LARGE_TEXT_SCALE, RAIL_WIDTH, useWindowLayout } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
 import { minTouchTarget, radius, spacing, typography } from '@/theme/tokens';
 
@@ -17,64 +18,64 @@ export interface TabIcons {
 }
 
 /**
- * Barra inferior flotante propia: cuatro iconos siempre visibles; solo la pestaña activa
- * se ensancha en una píldora con su etiqueta. Va en el flujo del layout, no superpuesta.
+ * Navegación principal: cuatro iconos siempre visibles y etiqueta solo en la sección activa.
+ * Barra inferior en ventanas compactas; carril lateral desde 600 dp.
  */
 export function FloatingTabBar({ state, descriptors, emitter, navigateToTab, icons }: TabBarProps & { icons: Record<string, TabIcons> }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { sideNavigation: rail, fontScale } = useWindowLayout();
+  const stackLabel = rail || fontScale >= LARGE_TEXT_SCALE;
   const keyboardOpen = useKeyboardOpen();
 
   // En Android el teclado empuja la ventana: se oculta la barra para dejar sitio al campo activo.
-  if (keyboardOpen && Platform.OS === 'android') return null;
+  if (!rail && keyboardOpen && Platform.OS === 'android') return null;
+
+  const outer = rail
+    ? { paddingTop: insets.top + spacing.lg, paddingBottom: insets.bottom + spacing.lg, paddingLeft: insets.left + spacing.sm, paddingRight: spacing.sm, width: RAIL_WIDTH + insets.left }
+    : { paddingLeft: insets.left + spacing.md, paddingRight: insets.right + spacing.md, paddingTop: spacing.xs, paddingBottom: Math.max(insets.bottom, spacing.md) };
 
   return (
-    <View style={[styles.outer, { backgroundColor: colors.background, paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
-      <View
-        accessibilityRole="tablist"
-        style={[styles.bar, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.scrim }]}>
-        {state.routes.map((route, index) => {
-          const focused = state.index === index;
-          const { options } = descriptors[route.key];
-          const label = typeof options.title === 'string' ? options.title : route.name;
-          const tabIcons = icons[route.name];
-          const color = focused ? colors.primary : colors.textSecondary;
+    <View accessibilityRole="tablist" style={[rail ? styles.rail : styles.bar, { backgroundColor: colors.background }, outer]}>
+      {state.routes.map((route, index) => {
+        const focused = state.index === index;
+        const { options } = descriptors[route.key];
+        const label = typeof options.title === 'string' ? options.title : route.name;
+        const tabIcons = icons[route.name];
+        const color = focused ? colors.textPrimary : colors.textSecondary;
 
-          function onPress() {
-            const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-            if (!focused && !event.defaultPrevented) navigateToTab(route.key);
-          }
+        function onPress() {
+          const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+          if (!focused && !event.defaultPrevented) navigateToTab(route.key);
+        }
 
-          return (
-            <Pressable
-              key={route.key}
-              accessibilityRole="tab"
-              accessibilityLabel={label}
-              accessibilityState={{ selected: focused }}
-              onPress={onPress}
-              onLongPress={() => emitter.emit({ type: 'tabLongPress', target: route.key })}
-              style={styles.slot}>
-              {/* collapsable={false}: sin fondo, Fabric aplana la píldora y al activarse pierde forma y hermanos. */}
-              <View
-                collapsable={false}
-                style={[styles.pill, focused && { backgroundColor: colors.brandSubtle, paddingHorizontal: spacing.lg }]}>
-                {tabIcons ? (
-                  <MaterialCommunityIcons name={focused ? tabIcons.activeIcon : tabIcons.icon} size={24} color={color} />
-                ) : null}
-                {focused ? (
-                  <TabLabel label={label} color={color} />
-                ) : null}
-              </View>
-            </Pressable>
-          );
-        })}
-      </View>
+        return (
+          <Pressable
+            key={route.key}
+            accessibilityRole="tab"
+            accessibilityLabel={label}
+            accessibilityState={{ selected: focused }}
+            onPress={onPress}
+            onLongPress={() => emitter.emit({ type: 'tabLongPress', target: route.key })}
+            style={rail ? styles.railSlot : styles.slot}>
+            {/* collapsable={false}: sin fondo, Fabric aplana la píldora y al activarse pierde forma y hermanos. */}
+            <View
+              collapsable={false}
+              style={[stackLabel ? styles.railPill : styles.pill, focused && { backgroundColor: colors.surface }]}>
+              {tabIcons ? (
+                <MaterialCommunityIcons name={focused ? tabIcons.activeIcon : tabIcons.icon} size={24} color={color} />
+              ) : null}
+              {focused ? <TabLabel label={label} color={color} centered={stackLabel} /> : null}
+            </View>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
 
 /** Etiqueta de la pestaña activa: aparece con un fundido breve al montarse. */
-function TabLabel({ label, color }: { label: string; color: string }) {
+function TabLabel({ label, color, centered }: { label: string; color: string; centered: boolean }) {
   const opacity = useSharedValue(0);
   useEffect(() => {
     // withTiming respeta por defecto la preferencia de movimiento reducido del sistema.
@@ -83,7 +84,7 @@ function TabLabel({ label, color }: { label: string; color: string }) {
   const animated = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
   return (
-    <Animated.Text numberOfLines={1} style={[typography.label, styles.label, { color }, animated]}>
+    <Animated.Text style={[typography.label, styles.label, centered && styles.centered, { color }, animated]}>
       {label}
     </Animated.Text>
   );
@@ -103,27 +104,23 @@ function useKeyboardOpen() {
 }
 
 const styles = StyleSheet.create({
-  outer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
-  bar: {
-    flexDirection: 'row',
-    padding: spacing.xs,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    elevation: 3,
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-  },
+  bar: { flexDirection: 'row', gap: 2 },
+  rail: { gap: spacing.sm },
   // Mismo estilo para todas (cambiar flex entre renders deja anchos obsoletos en Fabric):
   // cada una parte del ancho de su contenido y el espacio sobrante se reparte por igual.
-  slot: { flexGrow: 1, flexBasis: 'auto', minHeight: minTouchTarget + spacing.sm, alignItems: 'center', justifyContent: 'center' },
+  // flexShrink con mínimo: con letra grande la etiqueta activa cede espacio y ningún icono sale de pantalla.
+  slot: { flexGrow: 1, flexShrink: 1, flexBasis: 'auto', minWidth: minTouchTarget, minHeight: minTouchTarget + spacing.xs, alignItems: 'center', justifyContent: 'center' },
+  railSlot: { minHeight: minTouchTarget, alignItems: 'stretch', justifyContent: 'center' },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     minHeight: minTouchTarget,
+    maxWidth: '100%',
     paddingHorizontal: spacing.md,
     borderRadius: radius.pill,
   },
+  railPill: { alignItems: 'center', justifyContent: 'center', gap: spacing.xs, minHeight: minTouchTarget, padding: spacing.sm, borderRadius: radius.group },
   label: { flexShrink: 1 },
+  centered: { textAlign: 'center' },
 });

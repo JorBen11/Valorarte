@@ -19,7 +19,7 @@ La aplicación tiene cuatro secciones:
 3. **Productos:** productos fabricados, productos para reventa y servicios.
 4. **Ajustes:** preferencias y configuración del negocio.
 
-La navegación inferior mantiene los cuatro iconos visibles y muestra la etiqueta solo para la sección activa.
+La navegación mantiene los cuatro iconos visibles y muestra la etiqueta solo para la sección activa. Su posición depende del tamaño de ventana (sección 13).
 
 Los formularios o flujos secundarios pueden usar una cabecera propia, con título claro, acción de cierre o regreso accesible y comportamiento correcto al descartar cambios.
 
@@ -61,6 +61,10 @@ Permitir que el usuario entienda rápidamente qué necesita atención y cómo es
 - Explica por qué una cifra es estimada o incompleta.
 - Permite identificar el periodo al que corresponden las cifras.
 
+### Dirección visual aprobada (sin implementar)
+
+El ingreso es la única etiqueta principal. Las alertas usan la misma fila que la lista de ingredientes. Acciones: Vender (icono y texto), Compra (solo icono) y Producción (icono y texto). Ver `docs/DESIGN-SYSTEM.md`.
+
 ### Estado sin datos
 
 Explica qué información falta y cómo empezar. No muestres cifras ficticias ni un panel de métricas vacío como si el negocio ya tuviera actividad.
@@ -82,7 +86,14 @@ Debe permitir reconocer rápidamente:
 - Indicador de seguimiento por lotes, cuando corresponda.
 - Acciones disponibles según el estado de la implementación.
 
-Debe incluir búsqueda, filtros y ordenación cuando estén implementados en el alcance vigente.
+Implementado (2026-10-28):
+
+- Búsqueda por nombre y categoría, sin distinguir mayúsculas ni acentos.
+- Filtros combinables en hoja: existencias (todos, stock bajo, sin existencias, sin registrar) y categoría. Stock bajo = existencias > 0 y ≤ umbral; sin existencias = 0; sin registrar = ningún movimiento.
+- Orden: nombre (predeterminado), cantidad disponible (por dimensión, menor primero), prioridad de reposición y actividad reciente.
+- El contador del título muestra el total o «N de M» cuando hay búsqueda o filtros.
+- Cada fila abre el detalle. Búsqueda, filtros y orden se conservan al volver.
+- No hay filtro de vencimientos: el modelo de lotes aún no existe.
 
 ### Criterios de composición
 
@@ -93,6 +104,8 @@ Debe incluir búsqueda, filtros y ordenación cuando estén implementados en el 
 - Mantén visibles las señales importantes sin saturar todas las filas.
 - El botón flotante de añadir debe ser accesible y no tapar contenido.
 - El contador del título debe representar el número real de elementos.
+
+Previsto, sin implementar: cada fila muestra la representación del ingrediente (fotografía, emoji o estado predeterminado) en un círculo de 44 dp. La etiqueta compacta aparece solo con stock bajo o sin existencias. El lector de pantalla anuncia el nombre, no el emoji. Ver `docs/DESIGN-SYSTEM.md`, sección 16.
 
 ### Estado vacío
 
@@ -139,6 +152,8 @@ Cuando esté implementado, debe poder mostrar:
 
 No muestres una gráfica vacía o inventada si no hay suficientes datos.
 
+Implementado (2026-10-28), ruta `/ingredients/[id]`: nombre, categoría y estado; existencias destacadas; umbral; costo promedio como «No calculable» hasta que existan compras; medida y unidad base; lotes, notas y fechas; movimientos reales (más reciente primero). Acciones: editar (cabecera) y «Ajustar existencias» (`/ingredients/adjust`: entrada o salida, cantidad en cualquier unidad de la dimensión, motivo obligatorio, vista previa antes → después, sin stock negativo). La edición reutiliza el formulario de alta y no permite cambiar la dimensión. Pendiente: compras, último precio, historial de costos, usos en recetas y lotes.
+
 ### Compra de ingrediente
 
 El flujo debe contemplar los campos definidos por el dominio, según corresponda:
@@ -173,6 +188,8 @@ Prioriza, según el tipo de producto:
 - Margen.
 - Existencias, si aplica.
 - Indicadores relevantes de rentabilidad o inventario.
+
+Previsto, sin implementar: miniatura con fotografía, o etiqueta en blanco si no la tiene. Los productos no usan emojis. Ver `docs/DESIGN-SYSTEM.md`, sección 16.
 
 ### Criterios de composición
 
@@ -408,3 +425,42 @@ Una pantalla se acepta cuando:
 - Ha sido verificada con las herramientas disponibles y sus limitaciones están documentadas.
 
 La compilación y las pruebas automatizadas no sustituyen una inspección visual real.
+
+## 13. Comportamiento adaptativo
+
+Implementado en las pantallas existentes; el resto es previsión. La simultaneidad de lista y detalle desde 840 dp se aplica cuando el flujo lo justifique. Clases y reglas: `docs/DESIGN-SYSTEM.md`, sección 18. Las pantallas marcadas con * aún no existen; su fila es una previsión.
+
+| Pantalla | Compacto (< 600) | Medio (600–839) | Expandido (840–1199) | Amplio (≥ 1200) |
+| --- | --- | --- | --- | --- |
+| Inicio* | Una columna: alertas, ingreso, desglose y acciones | Dos columnas: alertas e ingreso / desglose y cobros | Dos columnas, con las acciones visibles arriba | Tres grupos, máximo 1200 dp |
+| Ingredientes | Lista; el detalle abre otra pantalla | Lista ancha con categoría y estado en columnas | Lista (unos 360 dp) y detalle simultáneos | Igual, máximo 1200 dp |
+| Productos* | Lista con miniatura | Lista con precio, costo y margen en columnas | Lista y detalle simultáneos | Igual, máximo 1200 dp |
+| Formularios | Pantalla completa, acción accesible | Una columna centrada, máximo 600 | Secciones en dos columnas solo si el ancho efectivo lo permite | Igual, máximo 840 |
+| Detalles | Una columna: identidad, cifra e historial | Dos columnas: identidad y cifras / historial | Panel junto a la lista, una o dos columnas según su ancho | Igual |
+| Compras* | Formulario y resumen fijo plegable | Una columna y resumen visible | Formulario y vista previa de costo simultáneos | Igual, máximo 1200 |
+| Producción* | Producto y cantidad primero; consumo debajo | Una columna ancha | Formulario y consumo de ingredientes simultáneos | Igual, máximo 1200 |
+| Ventas* | Flujo por pasos | Flujo con resumen visible | Catálogo y venta simultáneos | Igual, máximo 1200 |
+| Ajustes | Lista | Una columna, máximo 600 | Una columna, máximo 600. Dos paneles solo cuando haya varias categorías | Igual |
+| Diálogos | Centrados, casi a todo el ancho | Centrados, máximo 480 | Igual | Igual |
+| Hojas y menús | Hoja inferior | Diálogo centrado, máximo 480 | Diálogo o menú anclado al control | Igual |
+
+**Alto bajo (< 480 dp), sea cual sea el ancho:** por defecto sin paneles simultáneos; navegación lateral, títulos y cabeceras reducidos en espacio, no en tamaño de letra. Las hojas ocupan como máximo el alto disponible y se desplazan.
+
+**Texto ampliado:** las columnas se deciden con `ancho / fontScale`, de modo que un teléfono o una tablet con letra muy grande puede volver a una columna.
+
+### Pruebas en Android
+
+Con los emuladores disponibles: `Pixel_7a` y `Pixel_Fold`. Falta crear una tablet. Validar además en un dispositivo físico; un emulador no sustituye la prueba de rendimiento ni del gesto de plegado.
+
+| Prueba | Cómo | Se comprueba |
+| --- | --- | --- |
+| Clases | `adb shell wm size` y `wm density` en cada límite: 599, 600, 839, 840, 1199 y 1200 dp | Cambio de composición sin desbordamiento |
+| Orientación | Girar en cada pantalla con un formulario a medio llenar | No se pierde estado |
+| Alto bajo | Teléfono en horizontal | Sin paneles; todo alcanzable |
+| Plegado | Pixel Fold: plegar y desplegar con la pantalla abierta | Sin reinicio; estado conservado |
+| Postura | Pixel Fold semiabierto, registrando lo que informa WindowManager | Si hace falta el módulo local |
+| Multiventana | Pantalla dividida y redimensionar | Se adapta en vivo |
+| Texto | `adb shell settings put system font_scale` a 1.3 y 2.0, restaurando después | Sin recortes; importes completos |
+| Teclado | Formularios en todas las clases | Campo y acción visibles |
+| Temas | `adb shell cmd uimode night yes`, restaurando después | Contraste en todas las clases |
+| Lector | TalkBack en lista-detalle | Orden de foco y anuncio de la selección |

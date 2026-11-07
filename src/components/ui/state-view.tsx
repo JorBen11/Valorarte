@@ -7,9 +7,11 @@ import { spacing, typography } from '@/theme/tokens';
 
 import { Button, type ButtonVariant } from './button';
 import { Spinner } from './spinner';
+import { EmptyTag } from './tag';
 
 interface StateViewProps {
-  icon: ComponentProps<typeof MaterialCommunityIcons>['name'];
+  /** Sin icono se dibuja la etiqueta en blanco, propia de los estados vacíos. */
+  icon?: ComponentProps<typeof MaterialCommunityIcons>['name'];
   /** Color del icono; por defecto, texto secundario. */
   iconColor?: string;
   title: string;
@@ -23,15 +25,19 @@ export function StateView({ icon, iconColor, title, message, action }: StateView
 
   return (
     <View style={styles.container}>
-      <View style={[styles.iconWell, { backgroundColor: colors.brandSubtle }]}>
-        <MaterialCommunityIcons
-          name={icon}
-          size={32}
-          color={iconColor ?? colors.textSecondary}
-          accessibilityElementsHidden
-          importantForAccessibility="no"
-        />
-      </View>
+      {icon ? (
+        <View style={[styles.iconWell, { backgroundColor: colors.surface }]}>
+          <MaterialCommunityIcons
+            name={icon}
+            size={32}
+            color={iconColor ?? colors.textSecondary}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+          />
+        </View>
+      ) : (
+        <EmptyTag />
+      )}
       <View style={styles.text}>
         <Text accessibilityRole="header" style={[typography.sectionTitle, styles.center, { color: colors.textPrimary }]}>
           {title}
@@ -51,7 +57,7 @@ export function LoadingView({ message }: { message: string }) {
 
   return (
     <View accessible accessibilityRole="progressbar" accessibilityLabel={message} style={styles.container}>
-      <Spinner color={colors.primary} size={32} />
+      <Spinner color={colors.primaryText} size={32} />
       <Text style={[typography.body, styles.center, { color: colors.textSecondary }]}>{message}</Text>
     </View>
   );

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
 import { useTheme } from '@/theme/theme-provider';
-import { minTouchTarget, radius, spacing, tabularNumbers, typography } from '@/theme/tokens';
+import { radius, spacing, tabularNumbers, typography } from '@/theme/tokens';
 
 interface TextFieldProps extends Pick<TextInputProps, 'keyboardType' | 'autoCapitalize' | 'maxLength' | 'multiline'> {
   label: string;
@@ -18,7 +18,7 @@ interface TextFieldProps extends Pick<TextInputProps, 'keyboardType' | 'autoCapi
 export function TextField({ label, value, onChangeText, hint, error, suffix, ...inputProps }: TextFieldProps) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
-  const borderColor = error ? colors.error : focused ? colors.primary : colors.fieldBorder;
+  const borderColor = error ? colors.error : focused ? colors.primaryText : colors.fieldBorder;
   const numeric = inputProps.keyboardType === 'decimal-pad' || inputProps.keyboardType === 'numeric';
 
   return (
@@ -41,8 +41,8 @@ export function TextField({ label, value, onChangeText, hint, error, suffix, ...
           accessibilityLabel={suffix ? `${label} (${suffix})` : label}
           accessibilityHint={error ?? hint}
           placeholderTextColor={colors.textSecondary}
-          cursorColor={colors.primary}
-          selectionColor={colors.brandSubtle}
+          cursorColor={colors.primaryText}
+          selectionColor={colors.fieldBorder}
           style={[
             typography.body,
             styles.input,
@@ -67,7 +67,7 @@ export function TextField({ label, value, onChangeText, hint, error, suffix, ...
 const styles = StyleSheet.create({
   container: { gap: spacing.sm },
   field: {
-    minHeight: minTouchTarget,
+    minHeight: 52,
     borderRadius: radius.control,
     flexDirection: 'row',
     alignItems: 'center',

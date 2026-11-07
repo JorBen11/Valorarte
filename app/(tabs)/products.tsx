@@ -7,7 +7,7 @@ export default function ProductsScreen() {
   const { t } = useTranslation();
   return (
     <Screen title={t('products.title')}>
-      <StateView icon="timer-sand" title={t('common.comingSoon')} message={t('common.notAvailableYet')} />
+      <StateView title={t('products.unavailableTitle')} message={t('products.unavailable')} />
     </Screen>
   );
 }

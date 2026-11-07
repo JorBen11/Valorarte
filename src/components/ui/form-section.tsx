@@ -11,7 +11,7 @@ export function FormSection({ title, children }: { title: string; children: Reac
   return (
     <View style={styles.section}>
       <View style={styles.header}>
-        <Text accessibilityRole="header" style={[typography.itemTitle, { color: colors.textPrimary }]}>
+        <Text accessibilityRole="header" style={[typography.sectionTitle, { color: colors.textPrimary }]}>
           {title}
         </Text>
         <View style={[styles.rule, { backgroundColor: colors.border }]} />

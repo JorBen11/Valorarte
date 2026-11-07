@@ -2,11 +2,12 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, Stack, useLocalSearchParams, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
+import { IconButton, StatusMessage, Surface } from '@/components/ui/surface';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { SelectField } from '@/components/ui/select-field';
 import { LoadingView, StateView } from '@/components/ui/state-view';
@@ -18,8 +19,9 @@ import type { UnitCode } from '@/domain/units';
 import { DomainValidationError } from '@/domain/validation';
 import { fieldErrors } from '@/features/validation-messages';
 import { normalizeDecimalInput } from '@/i18n/format-quantity';
+import { columnsFor, FORM_MAX_WIDTH, useWindowLayout } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
-import { fontFamily, minTouchTarget, radius, spacing, tabularNumbers, typography } from '@/theme/tokens';
+import { fontFamily, spacing, typography } from '@/theme/tokens';
 
 import { IngredientNotFoundError, loadIngredientDetail, recordInventoryAdjustment, type IngredientDetail } from './ingredient-use-cases';
 import { decimalSeparator, formatStock } from './stock-labels';
@@ -30,6 +32,9 @@ export function AdjustStockScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const database = useDatabase();
+  const layout = useWindowLayout();
+  // Cantidad y unidad comparten fila solo si ambas caben con la letra actual.
+  const inlineQuantity = columnsFor(Math.min(layout.width, FORM_MAX_WIDTH) - layout.gutter * 2, 150, layout.fontScale) > 1;
   const { ingredientId = '' } = useLocalSearchParams<{ ingredientId?: string }>();
 
   const [detail, setDetail] = useState<IngredientDetail | null | 'loading' | 'error'>('loading');
@@ -64,17 +69,8 @@ export function AdjustStockScreen() {
         headerStyle: { backgroundColor: colors.background },
         headerShadowVisible: false,
         headerTintColor: colors.textPrimary,
-        headerTitleStyle: { fontFamily: fontFamily.semiBold, fontSize: 18 },
-        headerLeft: () => (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('common.close')}
-            hitSlop={8}
-            onPress={() => router.back()}
-            style={styles.close}>
-            <MaterialCommunityIcons name="close" size={24} color={colors.textPrimary} />
-          </Pressable>
-        ),
+        headerTitleStyle: { fontFamily: fontFamily.display, fontSize: 20 },
+        headerLeft: () => <IconButton bare icon="close" accessibilityLabel={t('common.close')} onPress={() => router.back()} />,
       }}
     />
   );
@@ -121,7 +117,7 @@ export function AdjustStockScreen() {
   return (
     <KeyboardAvoidingView style={[styles.root, { backgroundColor: colors.background }]} behavior="padding">
       {header}
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.form}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.form, { paddingHorizontal: layout.gutter }]}>
         <Text style={[typography.sectionTitle, { color: colors.textPrimary }]}>{ingredient.name}</Text>
         <SegmentedControl
           label={t('ingredients.adjust.direction')}
@@ -132,8 +128,8 @@ export function AdjustStockScreen() {
           selected={direction}
           onSelect={setDirection}
         />
-        <View style={styles.quantityRow}>
-          <View style={styles.flex}>
+        <View style={inlineQuantity ? styles.quantityRow : styles.quantityStack}>
+          <View style={inlineQuantity ? styles.flex : undefined}>
             <TextField
               label={t('ingredients.adjust.quantity')}
               value={quantity}
@@ -142,7 +138,7 @@ export function AdjustStockScreen() {
               error={errors.quantity}
             />
           </View>
-          <View style={styles.unitColumn}>
+          <View style={inlineQuantity ? styles.unitColumn : undefined}>
             <SelectField
               label={t('ingredients.new.unit')}
               options={unitsOfDimension(ingredient.dimension).map((value) => ({ value, label: unitName(value, t) }))}
@@ -153,7 +149,7 @@ export function AdjustStockScreen() {
         </View>
 
         {/* Antes → después: el efecto del ajuste se ve como datos, no como frase. */}
-        <View style={[styles.preview, { backgroundColor: colors.surface, borderColor: negative ? colors.error : colors.border }]}>
+        <Surface padded style={styles.preview}>
           <PreviewValue label={t('ingredients.adjust.current')} value={stock ? formatStock(stock, ingredient, t) : t('ingredients.stock.notRecorded')} />
           <MaterialCommunityIcons name="arrow-right" size={20} color={colors.textSecondary} />
           <PreviewValue
@@ -161,7 +157,7 @@ export function AdjustStockScreen() {
             value={after ? (negative ? t('ingredients.adjust.insufficient') : formatStock(after, ingredient, t)) : '—'}
             color={negative ? colors.error : undefined}
           />
-        </View>
+        </Surface>
 
         <TextField
           label={t('ingredients.adjust.reason')}
@@ -178,13 +174,9 @@ export function AdjustStockScreen() {
       <View
         style={[
           styles.footer,
-          { borderTopColor: colors.border, backgroundColor: colors.background, paddingBottom: insets.bottom + spacing.md },
+          { borderTopColor: colors.border, backgroundColor: colors.background, paddingBottom: insets.bottom + spacing.md, paddingHorizontal: Math.max(layout.gutter, (layout.width - FORM_MAX_WIDTH) / 2) },
         ]}>
-        {formError ? (
-          <Text accessibilityLiveRegion="polite" style={[typography.caption, { color: colors.error }]}>
-            {formError}
-          </Text>
-        ) : null}
+        {formError ? <StatusMessage kind="error" message={formError} /> : null}
         <Button label={t('ingredients.adjust.save')} onPress={save} loading={saving} disabled={negative} />
       </View>
       <Dialog
@@ -214,7 +206,7 @@ function PreviewValue({ label, value, color }: { label: string; value: string; c
   return (
     <View accessible style={styles.flex}>
       <Text style={[typography.caption, { color: colors.textSecondary }]}>{label}</Text>
-      <Text style={[typography.itemTitle, tabularNumbers, { color: color ?? colors.textPrimary }]}>{value}</Text>
+      <Text style={[typography.quantity, { color: color ?? colors.textPrimary }]}>{value}</Text>
     </View>
   );
 }
@@ -222,19 +214,12 @@ function PreviewValue({ label, value, color }: { label: string; value: string; c
 const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
-  form: { padding: spacing.xl, gap: spacing.xxl },
+  form: { width: '100%', maxWidth: FORM_MAX_WIDTH, alignSelf: 'center', paddingVertical: spacing.xl, gap: spacing.xxl },
+  quantityStack: { gap: spacing.md },
   // El selector de unidad junto al campo ya muestra la unidad: el campo no repite el sufijo.
   quantityRow: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   unitColumn: { flex: 1.4 },
-  preview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radius.control,
-    borderWidth: 1,
-  },
+  preview: { flexDirection: 'row', alignItems: 'center' },
   note: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
-  footer: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, gap: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
-  close: { minWidth: minTouchTarget, minHeight: minTouchTarget, justifyContent: 'center' },
+  footer: { paddingTop: spacing.md, gap: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
 });

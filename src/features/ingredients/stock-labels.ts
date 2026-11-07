@@ -27,10 +27,10 @@ export const STOCK_STATUS_STYLE: Record<
   StockStatus,
   { icon: ComponentProps<typeof MaterialCommunityIcons>['name']; color: keyof ThemeColors }
 > = {
-  out: { icon: 'alert-circle-outline', color: 'error' },
-  low: { icon: 'alert-outline', color: 'warning' },
+  out: { icon: 'close-octagon', color: 'textPrimary' },
+  low: { icon: 'alert', color: 'textPrimary' },
   unknown: { icon: 'help-circle-outline', color: 'textSecondary' },
-  ok: { icon: 'check-circle-outline', color: 'success' },
+  ok: { icon: 'check-circle-outline', color: 'textPrimary' },
 };
 
 export function formatDateTime(iso: string, language: string): string {

@@ -1,12 +1,13 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { ChoiceChips } from '@/components/ui/choice-chips';
 import { FormSection } from '@/components/ui/form-section';
 import { SegmentedControl } from '@/components/ui/segmented-control';
+import { StatusMessage } from '@/components/ui/surface';
 import { TextField } from '@/components/ui/text-field';
 import type { SqlDatabase } from '@/data/database/database';
 import {
@@ -18,6 +19,7 @@ import {
 import { DomainValidationError } from '@/domain/validation';
 import { registerBusiness } from '@/features/ingredients/ingredient-use-cases';
 import { fieldErrors } from '@/features/validation-messages';
+import { FORM_MAX_WIDTH } from '@/theme/layout';
 import { useTheme } from '@/theme/theme-provider';
 import { spacing, typography } from '@/theme/tokens';
 
@@ -37,6 +39,7 @@ interface BusinessSetupFormProps {
 export function BusinessSetupForm({ db, onCreated }: BusinessSetupFormProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { fontScale } = useWindowDimensions();
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [currencyCode, setCurrencyCode] = useState('');
@@ -75,8 +78,8 @@ export function BusinessSetupForm({ db, onCreated }: BusinessSetupFormProps) {
       </View>
       <TextField label={t('business.setup.name')} value={name} onChangeText={setName} error={errors.name} />
       <FormSection title={t('business.setup.section.region')}>
-        <View style={styles.codes}>
-          <View style={styles.code}>
+        <View style={[styles.codes, fontScale >= 1.5 && styles.codesStacked]}>
+          <View style={fontScale >= 1.5 ? undefined : styles.code}>
             <TextField
               label={t('business.setup.countryCode')}
               hint={t('business.setup.countryHint')}
@@ -87,7 +90,7 @@ export function BusinessSetupForm({ db, onCreated }: BusinessSetupFormProps) {
               error={errors.countryCode}
             />
           </View>
-          <View style={styles.code}>
+          <View style={fontScale >= 1.5 ? undefined : styles.code}>
             <TextField
               label={t('business.setup.currencyCode')}
               hint={t('business.setup.currencyHint')}
@@ -121,15 +124,16 @@ export function BusinessSetupForm({ db, onCreated }: BusinessSetupFormProps) {
           onSelect={setCategory}
         />
       </FormSection>
-      {formError ? <Text style={[typography.caption, { color: colors.error }]}>{formError}</Text> : null}
-      <Button label={t('business.setup.submit')} onPress={submit} loading={saving} icon="check" />
+      {formError ? <StatusMessage kind="error" message={formError} /> : null}
+      <Button label={t('business.setup.submit')} onPress={submit} loading={saving} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  form: { gap: spacing.xxxl },
+  form: { gap: spacing.xxxl, width: '100%', maxWidth: FORM_MAX_WIDTH, alignSelf: 'center' },
   intro: { gap: spacing.sm },
   codes: { flexDirection: 'row', gap: spacing.md },
   code: { flex: 1 },
+  codesStacked: { flexDirection: 'column' },
 });

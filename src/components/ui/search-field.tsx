@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { type ComponentRef, useEffect, useRef, useState } from 'react';
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { useTheme } from '@/theme/theme-provider';
 import { minTouchTarget, radius, spacing, typography } from '@/theme/tokens';
@@ -16,15 +16,22 @@ interface SearchFieldProps {
 export function SearchField({ value, onChangeText, placeholder, clearLabel }: SearchFieldProps) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
+  const input = useRef<ComponentRef<typeof TextInput>>(null);
+  // Android cierra el teclado con «atrás» sin quitar el foco; el campo quedaba resaltado y el borrado lo conservaba.
+  useEffect(() => {
+    const sub = Keyboard.addListener('keyboardDidHide', () => input.current?.blur());
+    return () => sub.remove();
+  }, []);
 
   return (
     <View
       style={[
         styles.field,
-        { backgroundColor: colors.surface, borderColor: focused ? colors.primary : colors.fieldBorder },
+        { backgroundColor: colors.surface, borderColor: focused ? colors.primaryText : colors.surface },
       ]}>
       <MaterialCommunityIcons name="magnify" size={22} color={colors.textSecondary} />
       <TextInput
+        ref={input}
         value={value}
         onChangeText={onChangeText}
         onFocus={() => setFocused(true)}
@@ -35,8 +42,8 @@ export function SearchField({ value, onChangeText, placeholder, clearLabel }: Se
         returnKeyType="search"
         autoCorrect={false}
         placeholderTextColor={colors.textSecondary}
-        cursorColor={colors.primary}
-        selectionColor={colors.brandSubtle}
+        cursorColor={colors.primaryText}
+        selectionColor={colors.fieldBorder}
         style={[typography.body, styles.input, { color: colors.textPrimary }]}
       />
       {value ? (
@@ -44,7 +51,11 @@ export function SearchField({ value, onChangeText, placeholder, clearLabel }: Se
           accessibilityRole="button"
           accessibilityLabel={clearLabel}
           hitSlop={8}
-          onPress={() => onChangeText('')}
+          onPress={() => {
+            onChangeText('');
+            // Con el teclado abierto se conserva el foco para escribir otra búsqueda; cerrado, el campo vuelve a reposo.
+            if (!Keyboard.isVisible()) input.current?.blur();
+          }}
           style={styles.clear}>
           <MaterialCommunityIcons name="close-circle" size={20} color={colors.textSecondary} />
         </Pressable>
@@ -57,13 +68,13 @@ const styles = StyleSheet.create({
   field: {
     flex: 1,
     minHeight: minTouchTarget,
-    borderRadius: radius.control,
-    borderWidth: 1,
+    borderRadius: radius.pill,
+    borderWidth: 2,
     paddingLeft: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
   input: { flex: 1, paddingVertical: spacing.md },
-  clear: { width: minTouchTarget - 8, height: minTouchTarget - 8, alignItems: 'center', justifyContent: 'center' },
+  clear: { width: minTouchTarget, height: minTouchTarget, alignItems: 'center', justifyContent: 'center' },
 });

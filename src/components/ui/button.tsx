@@ -3,11 +3,12 @@ import type { ComponentProps } from 'react';
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 
 import { useTheme } from '@/theme/theme-provider';
-import { minTouchTarget, radius, spacing, typography, type ThemeColors } from '@/theme/tokens';
+import { minTouchTarget, radius, spacing, tagShape, typography, type ThemeColors } from '@/theme/tokens';
 
 import { Spinner } from './spinner';
 
-export type ButtonVariant = 'primary' | 'tonal' | 'text' | 'destructive';
+/** `destructive` confirma la acción con relleno; `destructiveText` la propone antes de confirmar. */
+export type ButtonVariant = 'primary' | 'tonal' | 'text' | 'destructive' | 'destructiveText';
 
 interface ButtonProps {
   label: string;
@@ -22,22 +23,24 @@ interface ButtonProps {
 function variantColors(variant: ButtonVariant, c: ThemeColors) {
   switch (variant) {
     case 'primary':
-      return { background: c.primary, text: c.onPrimary, ripple: c.brandSubtle };
+      return { background: c.primary, text: c.onPrimary };
     case 'tonal':
-      return { background: c.brandSubtle, text: c.primary, ripple: c.surfaceRaised };
+      return { background: c.surface, text: c.textPrimary };
     case 'text':
-      return { background: 'transparent', text: c.primary, ripple: c.brandSubtle };
+      return { background: 'transparent', text: c.textPrimary };
     case 'destructive':
-      return { background: 'transparent', text: c.error, ripple: c.surfaceRaised };
+      return { background: c.error, text: c.onError };
+    case 'destructiveText':
+      return { background: 'transparent', text: c.error };
   }
 }
 
-/** Jerarquía: primaria (una por pantalla), tonal (secundaria), texto (terciaria) y destructiva. */
+/** Jerarquía: primaria (una por pantalla, con eco de etiqueta), tonal (secundaria), texto (terciaria) y destructivas. */
 export function Button({ label, onPress, variant = 'primary', loading = false, disabled = false, icon }: ButtonProps) {
   const { colors } = useTheme();
   const v = variantColors(variant, colors);
   const inactive = disabled || loading;
-  const filled = variant === 'primary' || variant === 'tonal';
+  const filled = variant !== 'text' && variant !== 'destructiveText';
   // Deshabilitado no comparte aspecto con presionado: pierde el color de marca.
   const background = disabled && filled ? colors.surfaceRaised : v.background;
   const textColor = disabled ? colors.textSecondary : v.text;
@@ -49,9 +52,10 @@ export function Button({ label, onPress, variant = 'primary', loading = false, d
       accessibilityState={{ disabled: inactive, busy: loading }}
       disabled={inactive}
       onPress={onPress}
-      android_ripple={{ color: v.ripple }}
+      android_ripple={{ color: variant === 'primary' || variant === 'destructive' ? colors.border : colors.surfaceRaised }}
       style={({ pressed }) => [
         styles.base,
+        variant === 'primary' ? styles.primary : styles.rounded,
         { backgroundColor: background },
         pressed && Platform.OS === 'ios' && styles.pressed,
       ]}>
@@ -60,7 +64,7 @@ export function Button({ label, onPress, variant = 'primary', loading = false, d
       ) : (
         <>
           {icon ? <MaterialCommunityIcons name={icon} size={20} color={textColor} /> : null}
-          <Text style={[typography.button, { color: textColor }]}>{label}</Text>
+          <Text style={[typography.button, styles.label, { color: textColor }]}>{label}</Text>
         </>
       )}
     </Pressable>
@@ -71,12 +75,15 @@ const styles = StyleSheet.create({
   base: {
     minHeight: minTouchTarget,
     paddingHorizontal: spacing.xl,
-    borderRadius: radius.control,
+    paddingVertical: spacing.sm,
     flexDirection: 'row',
     gap: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  primary: { minHeight: 56, ...tagShape.primaryButton },
+  rounded: { borderRadius: radius.pill },
+  label: { flexShrink: 1, textAlign: 'center' },
   pressed: { opacity: 0.8 },
 });

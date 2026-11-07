@@ -1,7 +1,8 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/theme/theme-provider';
+import { SHEET_MAX_WIDTH } from '@/theme/layout';
 import { radius, spacing, typography } from '@/theme/tokens';
 
 import { Button, type ButtonVariant } from './button';
@@ -43,11 +44,13 @@ export function Dialog({ visible, title, message, actions, onDismiss }: DialogPr
         <View
           accessibilityViewIsModal
           accessibilityRole="alert"
-          style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.scrim }]}>
-          <Text accessibilityRole="header" style={[typography.sectionTitle, { color: colors.textPrimary }]}>
-            {title}
-          </Text>
-          {message ? <Text style={[typography.body, { color: colors.textSecondary }]}>{message}</Text> : null}
+          style={[styles.card, { backgroundColor: colors.surface }]}>
+          <ScrollView style={styles.scroll} contentContainerStyle={styles.body}>
+            <Text accessibilityRole="header" style={[typography.sectionTitle, { color: colors.textPrimary }]}>
+              {title}
+            </Text>
+            {message ? <Text style={[typography.body, { color: colors.textSecondary }]}>{message}</Text> : null}
+          </ScrollView>
           <View style={styles.actions}>
             {actions.map((action) => (
               <Button key={action.label} label={action.label} onPress={action.onPress} variant={action.variant ?? 'text'} />
@@ -64,14 +67,13 @@ const styles = StyleSheet.create({
   card: {
     alignSelf: 'center',
     width: '100%',
-    maxWidth: 400,
+    maxWidth: SHEET_MAX_WIDTH,
+    flexShrink: 1,
     borderRadius: radius.sheet,
     padding: spacing.xxl,
     gap: spacing.md,
-    elevation: 6,
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
   },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, marginTop: spacing.sm },
+  scroll: { flexGrow: 0 },
+  body: { gap: spacing.sm },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: spacing.sm, marginTop: spacing.sm },
 });

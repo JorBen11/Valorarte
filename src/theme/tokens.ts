@@ -1,10 +1,9 @@
 /**
- * Tokens del sistema de diseño (docs/DESIGN-SYSTEM.md).
+ * Tokens del sistema de diseño Etiqueta refinada (docs/DESIGN-SYSTEM.md, secciones 2, 4 y 5).
  * Todos los colores de la interfaz deben salir de aquí.
  *
- * Contraste medido (WCAG 2.x): textos ≥ 5.2:1 sobre fondo y superficies en ambos temas.
- * `accentPremium` (oro) da 2.97:1 sobre el fondo claro: solo decorativo, nunca texto.
- * `border` (≈1.2–1.6:1) es para divisores; los controles usan `fieldBorder` (≥ 3.3:1).
+ * `error` y `primary` tienen luminosidad casi igual: siempre van con icono o texto.
+ * `attention` sobre `background` no contrasta: la etiqueta compacta va sobre `surface`.
  */
 
 export type ColorScheme = 'light' | 'dark';
@@ -19,52 +18,87 @@ export interface ThemeColors {
   fieldBorder: string;
   primary: string;
   onPrimary: string;
-  brandSubtle: string;
-  accentPremium: string;
+  /** Rosa como texto, línea o foco; `primary` es solo relleno. */
+  primaryText: string;
+  attention: string;
+  onAttention: string;
+  ink: string;
+  onInk: string;
   success: string;
+  successSurface: string;
   warning: string;
-  error: string;
+  warningSurface: string;
   info: string;
+  infoSurface: string;
+  error: string;
+  errorSurface: string;
+  onError: string;
   /** Velo detrás de hojas y diálogos. */
   scrim: string;
+  imageEdge: string;
+  /** Solo para versiones anteriores de pantallas aún sin confirmar; ninguna pantalla migrada los usa. */
+  brandSubtle: string;
+  accentPremium: string;
 }
 
 export const colors: Record<ColorScheme, ThemeColors> = {
   light: {
-    background: '#FAF7F4',
-    surface: '#FFFFFF',
-    surfaceRaised: '#F1EBF2',
-    textPrimary: '#252128',
-    textSecondary: '#655F68',
-    border: '#E5DDE6',
-    fieldBorder: '#867D8A',
-    primary: '#603B68',
+    background: '#CFEEDD',
+    surface: '#F4FBF7',
+    surfaceRaised: '#E2F5EA',
+    textPrimary: '#10261C',
+    textSecondary: '#35574A',
+    border: 'rgba(16, 38, 28, 0.16)',
+    fieldBorder: '#5C7A6E',
+    primary: '#B80D66',
     onPrimary: '#FFFFFF',
-    brandSubtle: '#EDE3F0',
-    accentPremium: '#B18A50',
-    success: '#28745A',
-    warning: '#8B5D12',
-    error: '#B42335',
-    info: '#286A77',
-    scrim: 'rgba(37, 33, 40, 0.45)',
+    primaryText: '#A00B58',
+    attention: '#FFC531',
+    onAttention: '#10261C',
+    ink: '#10261C',
+    onInk: '#F4FBF7',
+    success: '#0E5F3C',
+    successSurface: '#D6F1E1',
+    warning: '#6F4A00',
+    warningSurface: '#FFF0C4',
+    info: '#0B5573',
+    infoSurface: '#D8EDF5',
+    error: '#A32A16',
+    errorSurface: '#FBE4DE',
+    onError: '#FFFFFF',
+    scrim: 'rgba(5, 18, 13, 0.6)',
+    imageEdge: 'rgba(0, 0, 0, 0.1)',
+    brandSubtle: '#E2F5EA',
+    accentPremium: '#A00B58',
   },
   dark: {
-    background: '#17141A',
-    surface: '#211D24',
-    surfaceRaised: '#2C2530',
-    textPrimary: '#F5F0F6',
-    textSecondary: '#C5BBC8',
-    border: '#403743',
-    fieldBorder: '#837887',
-    primary: '#D0A9D8',
-    onPrimary: '#251B28',
-    brandSubtle: '#3A2D3E',
-    accentPremium: '#B18A50',
-    success: '#6EC6A1',
-    warning: '#E8B65D',
-    error: '#FF7D89',
-    info: '#7BCAD4',
-    scrim: 'rgba(0, 0, 0, 0.6)',
+    background: '#10261C',
+    surface: '#1A3328',
+    surfaceRaised: '#234034',
+    textPrimary: '#E7F7EE',
+    textSecondary: '#A9CDBD',
+    border: 'rgba(231, 247, 238, 0.16)',
+    fieldBorder: '#7E9F92',
+    primary: '#B80D66',
+    onPrimary: '#FFFFFF',
+    primaryText: '#FF8FC2',
+    attention: '#FFC531',
+    onAttention: '#10261C',
+    ink: '#E7F7EE',
+    onInk: '#10261C',
+    success: '#8BE3B4',
+    successSurface: '#1E4A36',
+    warning: '#FFD166',
+    warningSurface: '#47391A',
+    info: '#93D4EE',
+    infoSurface: '#1B3F4F',
+    error: '#FFA08A',
+    errorSurface: '#4A2A22',
+    onError: '#10261C',
+    scrim: 'rgba(5, 18, 13, 0.6)',
+    imageEdge: 'rgba(255, 255, 255, 0.1)',
+    brandSubtle: '#234034',
+    accentPremium: '#FF8FC2',
   },
 };
 
@@ -79,29 +113,49 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  control: 12,
-  sheet: 20,
+  control: 14,
+  group: 20,
+  sheet: 24,
   pill: 999,
+} as const;
+
+/** Radios por esquina de la silueta de etiqueta: la nariz queda a la izquierda. */
+const tagCorners = (nose: number, end: number) => ({
+  borderTopLeftRadius: nose,
+  borderBottomLeftRadius: nose,
+  borderTopRightRadius: end,
+  borderBottomRightRadius: end,
+});
+
+export const tagShape = {
+  main: tagCorners(40, 16),
+  compact: tagCorners(16, 7),
+  primaryButton: tagCorners(28, 12),
+  thumbnail: tagCorners(22, 10),
 } as const;
 
 /** Área táctil mínima recomendada. */
 export const minTouchTarget = 48;
 
 export const fontFamily = {
-  regular: 'PlusJakartaSans-Regular',
-  medium: 'PlusJakartaSans-Medium',
-  semiBold: 'PlusJakartaSans-SemiBold',
-  bold: 'PlusJakartaSans-Bold',
+  regular: 'Figtree-Regular',
+  medium: 'Figtree-Medium',
+  semiBold: 'Figtree-SemiBold',
+  bold: 'Figtree-Bold',
+  display: 'BricolageGrotesque-SemiBold',
 } as const;
 
 export const typography = {
-  screenTitle: { fontFamily: fontFamily.bold, fontSize: 30, lineHeight: 36, letterSpacing: -0.6 },
-  sectionTitle: { fontFamily: fontFamily.semiBold, fontSize: 19, lineHeight: 26, letterSpacing: -0.2 },
-  itemTitle: { fontFamily: fontFamily.semiBold, fontSize: 16, lineHeight: 22 },
+  screenTitle: { fontFamily: fontFamily.display, fontSize: 26, lineHeight: 32 },
+  sectionTitle: { fontFamily: fontFamily.semiBold, fontSize: 17, lineHeight: 24 },
+  amountMain: { fontFamily: fontFamily.semiBold, fontSize: 36, lineHeight: 44, fontVariant: ['tabular-nums' as const] },
+  amountSecondary: { fontFamily: fontFamily.semiBold, fontSize: 20, lineHeight: 26, fontVariant: ['tabular-nums' as const] },
+  quantity: { fontFamily: fontFamily.semiBold, fontSize: 16, lineHeight: 22, fontVariant: ['tabular-nums' as const] },
+  itemTitle: { fontFamily: fontFamily.semiBold, fontSize: 15, lineHeight: 22 },
   body: { fontFamily: fontFamily.regular, fontSize: 15, lineHeight: 22 },
-  label: { fontFamily: fontFamily.medium, fontSize: 14, lineHeight: 20 },
+  label: { fontFamily: fontFamily.medium, fontSize: 13, lineHeight: 18 },
   caption: { fontFamily: fontFamily.regular, fontSize: 13, lineHeight: 18 },
-  button: { fontFamily: fontFamily.semiBold, fontSize: 15, lineHeight: 20 },
+  button: { fontFamily: fontFamily.bold, fontSize: 16, lineHeight: 22 },
 } as const;
 
 /** Cifras alineadas para cantidades e importes. */

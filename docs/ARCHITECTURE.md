@@ -22,7 +22,7 @@ El MVP no tendrá backend, autenticación real ni sincronización en la nube. La
 ## 3. Stack
 
 - React Native.
-- Expo SDK 57.
+- Expo SDK 58 (`expo` 58.0.20 en el lockfile).
 - Expo Router.
 - TypeScript.
 - Una base de datos local adecuada para datos relacionales y transacciones.
